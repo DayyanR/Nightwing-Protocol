@@ -1,5 +1,5 @@
 const CACHE = 'nightwing-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json', '/icon.svg'];
+const ASSETS = ['/Nightwing-Protocol/', '/Nightwing-Protocol/index.html', '/Nightwing-Protocol/manifest.json', '/Nightwing-Protocol/icon.svg'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
