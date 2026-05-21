@@ -1,0 +1,16 @@
+{
+  "name": "Nightwing Protocol",
+  "short_name": "Nightwing",
+  "description": "Superhero Aesthetic Training Program",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07070a",
+  "theme_color": "#d4f53c",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

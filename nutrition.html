@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nutrition — Nightwing Protocol</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#d4f53c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070a;--surface:#111115;--card:#16161c;--border:#1e1e26;--border2:#2a2a36;
+  --lime:#d4f53c;--lime2:#9ab52a;--lime-glow:rgba(212,245,60,0.07);
+  --white:#efefef;--muted:#6b6b80;--dim:#333344;
+  --orange:#ff7b3a;--gold:#ffc040;--red:#ff4560;--blue:#60b0ff;--green:#3cffa0;
+  --purple:#b06bff;--pink:#ff6bb0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;padding-bottom:100px}
+
+/* NAV */
+.top-nav{position:sticky;top:0;z-index:100;background:rgba(7,7,10,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.nav-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--lime);letter-spacing:1px}
+.nav-links{display:flex;gap:4px}
+.nav-btn{padding:7px 12px;border-radius:8px;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);text-decoration:none;transition:all 0.2s}
+.nav-btn.active,.nav-btn:hover{background:var(--lime-glow);border-color:rgba(212,245,60,0.3);color:var(--lime)}
+
+/* HERO */
+.hero{padding:28px 20px 8px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(212,245,60,0.05) 0%,transparent 70%);pointer-events:none}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:.88;color:var(--white)}
+.hero-title span{color:var(--lime)}
+.hero-sub{font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:1px;text-transform:uppercase}
+
+/* BODY STATS CARD */
+.body-card{margin:20px 20px 0;background:var(--card);border:1px solid rgba(212,245,60,0.2);border-radius:16px;overflow:hidden}
+.body-card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.body-card-title{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--white);letter-spacing:.5px}
+.body-stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.bstat{padding:16px 12px;border-right:1px solid var(--border);text-align:center}
+.bstat:last-child{border-right:none}
+.bstat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--lime);line-height:1}
+.bstat-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px;line-height:1.3}
+
+/* TARGET CARD */
+.target-card{margin:12px 20px 0;background:var(--card);border:1px solid var(--border2);border-radius:16px;overflow:hidden}
+.target-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.target-title{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--white)}
+.target-badge{background:rgba(212,245,60,0.1);border:1px solid rgba(212,245,60,0.25);border-radius:100px;padding:4px 12px;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--lime)}
+.target-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.tstat{padding:16px 12px;border-right:1px solid var(--border);text-align:center}
+.tstat:last-child{border-right:none}
+.tstat-val{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1}
+.tstat-val.green{color:var(--green)}
+.tstat-val.gold{color:var(--gold)}
+.tstat-val.blue{color:var(--blue)}
+.tstat-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px;line-height:1.3}
+.target-note{padding:14px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.6}
+.target-note strong{color:var(--white)}
+
+/* BF VISUAL */
+.bf-section{margin:12px 20px 0;background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:18px 20px}
+.bf-title{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.bf-track{position:relative;height:12px;background:var(--border2);border-radius:6px;overflow:hidden;margin-bottom:8px}
+.bf-fill{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:linear-gradient(90deg,var(--green),var(--lime),var(--gold),var(--orange),var(--red));width:100%}
+.bf-marker{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--white);border-radius:2px;transform:translateX(-50%)}
+.bf-marker-label{position:absolute;top:-22px;font-size:9px;font-weight:700;color:var(--white);transform:translateX(-50%);white-space:nowrap}
+.bf-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--dim)}
+.bf-zones{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.bf-zone{padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600}
+.z-target{background:rgba(212,245,60,0.12);color:var(--lime);border:1px solid rgba(212,245,60,0.3)}
+.z-current{background:rgba(255,192,64,0.12);color:var(--gold);border:1px solid rgba(255,192,64,0.3)}
+.z-elite{background:rgba(96,176,255,0.12);color:var(--blue);border:1px solid rgba(96,176,255,0.3)}
+
+/* CALORIE CARDS */
+.cal-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 20px 0}
+.cal-card{background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:18px;text-align:center}
+.cal-card.train-day{border-color:rgba(212,245,60,0.2)}
+.cal-card.rest-day{border-color:rgba(96,176,255,0.15)}
+.cal-icon{font-size:24px;margin-bottom:8px}
+.cal-type{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.cal-num{font-family:'Bebas Neue',sans-serif;font-size:44px;line-height:1}
+.train-day .cal-num{color:var(--lime)}
+.rest-day .cal-num{color:var(--blue)}
+.cal-unit{font-size:12px;color:var(--muted)}
+.cal-breakdown{margin-top:12px;display:flex;flex-direction:column;gap:4px}
+.cal-macro{display:flex;justify-content:space-between;font-size:11px}
+.cal-macro .macro-name{color:var(--muted)}
+.cal-macro .macro-val{font-weight:600;color:var(--white)}
+
+/* MACRO BARS */
+.macro-visual{margin:12px 20px 0;background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:18px 20px}
+.macro-title{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.macro-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.macro-row:last-child{margin-bottom:0}
+.macro-label{font-size:12px;font-weight:500;color:var(--white);width:70px;flex-shrink:0}
+.macro-bar-wrap{flex:1;height:10px;background:var(--border2);border-radius:5px;overflow:hidden}
+.macro-bar{height:100%;border-radius:5px;transition:width 1s ease}
+.bar-protein{background:linear-gradient(90deg,#ff6b6b,#ff4560);width:27%}
+.bar-carb{background:linear-gradient(90deg,var(--lime2),var(--lime));width:46%}
+.bar-fat{background:linear-gradient(90deg,#ffa040,var(--gold));width:27%}
+.macro-grams{font-family:'Bebas Neue',sans-serif;font-size:18px;width:55px;text-align:right;flex-shrink:0}
+.mg-protein{color:#ff4560}
+.mg-carb{color:var(--lime)}
+.mg-fat{color:var(--gold)}
+
+/* SECTION HEADERS */
+.sec-head{padding:24px 20px 12px;display:flex;align-items:center;gap:12px}
+.sec-line{flex:1;height:1px;background:var(--border)}
+.sec-label{font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--lime);white-space:nowrap}
+
+/* MEAL SCHEDULE */
+.meals{padding:0 20px;display:flex;flex-direction:column;gap:10px}
+.meal-card{background:var(--card);border:1px solid var(--border2);border-radius:14px;overflow:hidden}
+.meal-head{padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.meal-time-badge{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:5px 10px;text-align:center;flex-shrink:0}
+.meal-time{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--lime);line-height:1}
+.meal-time-sub{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.meal-info{flex:1}
+.meal-name{font-size:14px;font-weight:600;color:var(--white)}
+.meal-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.meal-cals{text-align:right;flex-shrink:0}
+.meal-cal-num{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);line-height:1}
+.meal-cal-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.meal-body{padding:12px 16px}
+.meal-item{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.meal-item:last-child{border-bottom:none}
+.mi-left{}
+.mi-name{font-size:13px;font-weight:500;color:var(--white)}
+.mi-note{font-size:11px;color:var(--muted);margin-top:2px}
+.mi-macros{text-align:right;flex-shrink:0;margin-left:12px}
+.mi-cal{font-size:12px;font-weight:600;color:var(--white)}
+.mi-p{font-size:10px;color:#ff6b6b}
+
+/* TIMING BADGE */
+.timing-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-left:6px}
+.tb-pre{background:rgba(212,245,60,0.1);color:var(--lime)}
+.tb-post{background:rgba(60,255,160,0.1);color:var(--green)}
+.tb-key{background:rgba(255,192,64,0.1);color:var(--gold)}
+
+/* SNACKS SECTION */
+.snack-filter{display:flex;gap:8px;padding:0 20px 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.snack-filter::-webkit-scrollbar{display:none}
+.snack-pill{padding:7px 14px;border-radius:100px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0}
+.snack-pill.active{background:var(--lime-glow);border-color:rgba(212,245,60,0.4);color:var(--lime)}
+
+.snack-grid{padding:0 20px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.snack-card{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:14px;transition:border-color 0.2s}
+.snack-card:active{border-color:rgba(212,245,60,0.3)}
+.snack-emoji{font-size:26px;margin-bottom:8px;display:block}
+.snack-name{font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;line-height:1.3}
+.snack-serving{font-size:11px;color:var(--muted);margin-bottom:8px}
+.snack-macros{display:flex;gap:6px;flex-wrap:wrap}
+.sm-tag{padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700}
+.sm-cal{background:rgba(255,192,64,0.12);color:var(--gold)}
+.sm-pro{background:rgba(255,69,96,0.12);color:#ff6b6b}
+.sm-carb{background:rgba(212,245,60,0.10);color:var(--lime2)}
+.snack-timing{font-size:10px;color:var(--muted);margin-top:8px;font-style:italic}
+.snack-cat-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:8px}
+.cat-fruit{background:rgba(255,123,58,0.12);color:var(--orange)}
+.cat-protein{background:rgba(255,69,96,0.12);color:#ff6b6b}
+.cat-carb{background:rgba(212,245,60,0.10);color:var(--lime2)}
+.cat-treat{background:rgba(176,107,255,0.12);color:var(--purple)}
+.cat-drink{background:rgba(96,176,255,0.12);color:var(--blue)}
+
+/* RULES */
+.rules{padding:0 20px;display:flex;flex-direction:column;gap:8px}
+.rule-card{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:flex-start}
+.rule-icon{font-size:20px;flex-shrink:0}
+.rule-title{font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px}
+.rule-body{font-size:12px;color:var(--muted);line-height:1.6}
+.rule-body strong{color:var(--lime)}
+
+/* WATER TRACKER */
+.water-card{margin:0 20px;background:var(--card);border:1px solid rgba(96,176,255,0.2);border-radius:16px;padding:18px 20px}
+.water-title{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:14px}
+.water-glasses{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.glass{width:36px;height:36px;border-radius:8px;border:1px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.2s}
+.glass.filled{background:rgba(96,176,255,0.15);border-color:rgba(96,176,255,0.4)}
+.water-status{font-size:12px;color:var(--muted)}
+.water-status span{color:var(--blue);font-weight:600}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(7,7,10,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;z-index:50}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;cursor:pointer;text-decoration:none;color:var(--muted);transition:color 0.2s}
+.bn-item.active{color:var(--lime)}
+.bn-icon{font-size:20px}
+.bn-label{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+
+/* DAY TOGGLE */
+.day-toggle{display:flex;gap:0;margin:16px 20px 0;background:var(--surface);border:1px solid var(--border2);border-radius:10px;overflow:hidden}
+.dt-btn{flex:1;padding:10px;text-align:center;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;color:var(--muted);transition:all 0.2s;border:none;background:transparent}
+.dt-btn.active{background:var(--lime-glow);color:var(--lime)}
+
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="top-nav">
+  <div class="nav-title">⚡ Nightwing</div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-btn">Program</a>
+    <a href="progress.html" class="nav-btn">Progress</a>
+    <a href="nutrition.html" class="nav-btn active">Nutrition</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-title">FUEL THE<br><span>PHYSIQUE</span></div>
+  <div class="hero-sub">Built for 135.5 lbs · 5'7.5" · Fasted Morning Training</div>
+</div>
+
+<!-- BODY STATS -->
+<div class="body-card">
+  <div class="body-card-head">
+    <span style="font-size:20px">📊</span>
+    <div class="body-card-title">Your Current Stats</div>
+  </div>
+  <div class="body-stats-grid">
+    <div class="bstat">
+      <div class="bstat-val">135.5</div>
+      <div class="bstat-lbl">Weight (lbs)</div>
+    </div>
+    <div class="bstat">
+      <div class="bstat-val">5'7.5"</div>
+      <div class="bstat-lbl">Height</div>
+    </div>
+    <div class="bstat">
+      <div class="bstat-val">~16%</div>
+      <div class="bstat-lbl">Est. Body Fat</div>
+    </div>
+    <div class="bstat">
+      <div class="bstat-val">~114</div>
+      <div class="bstat-lbl">Lean Mass (lbs)</div>
+    </div>
+  </div>
+</div>
+
+<!-- TARGET -->
+<div class="target-card">
+  <div class="target-head">
+    <div class="target-title">Nightwing Target — Oct 1</div>
+    <div class="target-badge">Goal</div>
+  </div>
+  <div class="target-grid">
+    <div class="tstat">
+      <div class="tstat-val green">128–131</div>
+      <div class="tstat-lbl">Target Weight (lbs)</div>
+    </div>
+    <div class="tstat">
+      <div class="tstat-val gold">9–11%</div>
+      <div class="tstat-lbl">Target Body Fat</div>
+    </div>
+    <div class="tstat">
+      <div class="tstat-val blue">−4.5–7.5</div>
+      <div class="tstat-lbl">lbs of Fat to Lose</div>
+    </div>
+  </div>
+  <div class="target-note">
+    <strong>You don't need to get bigger — you need to get leaner.</strong> At 5'7.5" and 135.5 lbs you already have the frame. Dropping to 128–131 lbs at 9–11% body fat will make every muscle fully visible. That's roughly losing 0.5–1 lb of fat per week while keeping all your muscle — totally achievable by Oct 1 with this program.
+  </div>
+</div>
+
+<!-- BF VISUAL -->
+<div class="bf-section">
+  <div class="bf-title">Body Fat % Range — Where You Are vs Where You're Going</div>
+  <div class="bf-track">
+    <div class="bf-fill"></div>
+    <div class="bf-marker" style="left:53%">
+      <div class="bf-marker-label" style="color:var(--gold)">YOU ~16%</div>
+    </div>
+    <div class="bf-marker" style="left:29%;background:var(--lime)">
+      <div class="bf-marker-label" style="color:var(--lime);left:-30px">GOAL 10%</div>
+    </div>
+  </div>
+  <div class="bf-labels">
+    <span>4%</span><span>8%</span><span>12%</span><span>16%</span><span>20%</span><span>25%+</span>
+  </div>
+  <div class="bf-zones">
+    <div class="bf-zone z-elite">4–7% — Competition</div>
+    <div class="bf-zone z-target">8–12% — Superhero ← Your Goal</div>
+    <div class="bf-zone z-current">13–17% — Athletic ← You Now</div>
+  </div>
+</div>
+
+<!-- CALORIES -->
+<div class="day-toggle">
+  <button class="dt-btn active" onclick="toggleDay('train')">🏋️ Training Day</button>
+  <button class="dt-btn" onclick="toggleDay('rest')">😴 Rest Day</button>
+</div>
+
+<div class="cal-row">
+  <div class="cal-card train-day" id="calTrainCard">
+    <div class="cal-icon">🏋️</div>
+    <div class="cal-type">Training Day</div>
+    <div class="cal-num">1,950</div>
+    <div class="cal-unit">calories</div>
+    <div class="cal-breakdown">
+      <div class="cal-macro"><span class="macro-name">Protein</span><span class="macro-val" style="color:#ff6b6b">135g</span></div>
+      <div class="cal-macro"><span class="macro-name">Carbs</span><span class="macro-val" style="color:var(--lime)">220g</span></div>
+      <div class="cal-macro"><span class="macro-name">Fat</span><span class="macro-val" style="color:var(--gold)">58g</span></div>
+    </div>
+  </div>
+  <div class="cal-card rest-day" id="calRestCard">
+    <div class="cal-icon">😴</div>
+    <div class="cal-type">Rest Day (Sun)</div>
+    <div class="cal-num">1,650</div>
+    <div class="cal-unit">calories</div>
+    <div class="cal-breakdown">
+      <div class="cal-macro"><span class="macro-name">Protein</span><span class="macro-val" style="color:#ff6b6b">135g</span></div>
+      <div class="cal-macro"><span class="macro-name">Carbs</span><span class="macro-val" style="color:var(--lime)">130g</span></div>
+      <div class="cal-macro"><span class="macro-name">Fat</span><span class="macro-val" style="color:var(--gold)">55g</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MACRO VISUAL -->
+<div class="macro-visual">
+  <div class="macro-title">Macro Split — Training Day</div>
+  <div class="macro-row">
+    <div class="macro-label">Protein</div>
+    <div class="macro-bar-wrap"><div class="macro-bar bar-protein"></div></div>
+    <div class="macro-grams mg-protein">135g</div>
+  </div>
+  <div class="macro-row">
+    <div class="macro-label">Carbs</div>
+    <div class="macro-bar-wrap"><div class="macro-bar bar-carb"></div></div>
+    <div class="macro-grams mg-carb">220g</div>
+  </div>
+  <div class="macro-row">
+    <div class="macro-label">Fat</div>
+    <div class="macro-bar-wrap"><div class="macro-bar bar-fat"></div></div>
+    <div class="macro-grams mg-fat">58g</div>
+  </div>
+  <div style="margin-top:12px;font-size:11px;color:var(--muted);line-height:1.6">
+    Protein is always <strong style="color:var(--white)">135g minimum</strong> regardless of day. Carbs drop on rest day because you don't need fuel for training. Fat stays consistent. <strong style="color:var(--white)">Protein first at every meal</strong> — it fills you up and protects muscle.
+  </div>
+</div>
+
+<!-- MEAL SCHEDULE -->
+<div class="sec-head"><div class="sec-label">Daily Meal Schedule</div><div class="sec-line"></div></div>
+
+<div class="meals">
+
+  <div class="meal-card">
+    <div class="meal-head">
+      <div class="meal-time-badge">
+        <div class="meal-time">5AM</div>
+        <div class="meal-time-sub">Wake + Go</div>
+      </div>
+      <div class="meal-info">
+        <div class="meal-name">Pre-Gym — Fasted <span class="timing-badge tb-pre">FASTED</span></div>
+        <div class="meal-sub">No food · Fat burning is highest here · Straight to gym</div>
+      </div>
+      <div class="meal-cals">
+        <div class="meal-cal-num">0</div>
+        <div class="meal-cal-lbl">cal</div>
+      </div>
+    </div>
+    <div class="meal-body">
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">Black Coffee (optional)</div>
+          <div class="mi-note">Boosts fat oxidation + focus · No sugar, no milk · Drink before leaving</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">5 cal</div>
+          <div class="mi-p">0g</div>
+        </div>
+      </div>
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">500ml Water</div>
+          <div class="mi-note">You've been dehydrated for 7–8 hrs · Drink immediately on waking</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">0 cal</div>
+          <div class="mi-p">0g</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="meal-card">
+    <div class="meal-head">
+      <div class="meal-time-badge">
+        <div class="meal-time">7–8AM</div>
+        <div class="meal-time-sub">Post-Workout</div>
+      </div>
+      <div class="meal-info">
+        <div class="meal-name">Post-Workout Breakfast <span class="timing-badge tb-post">POST</span><span class="timing-badge tb-key">Most Important</span></div>
+        <div class="meal-sub">Within 30–45 min of finishing · Biggest meal of the day · Don't skip</div>
+      </div>
+      <div class="meal-cals">
+        <div class="meal-cal-num">600</div>
+        <div class="meal-cal-lbl">cal</div>
+      </div>
+    </div>
+    <div class="meal-body">
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">4 Whole Eggs scrambled + 2 egg whites</div>
+          <div class="mi-note">Fastest complete protein after fasted training · Don't skip yolks</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">280 cal</div>
+          <div class="mi-p">32g protein</div>
+        </div>
+      </div>
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">¾ Cup Oats + 1 Banana</div>
+          <div class="mi-note">Replenishes glycogen burned during fasted session · Fast + slow carbs</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">270 cal</div>
+          <div class="mi-p">8g protein</div>
+        </div>
+      </div>
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">Greek Yogurt (150g, 0% plain)</div>
+          <div class="mi-note">Extra protein hit · Adds creaminess to oats or eat on the side</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">90 cal</div>
+          <div class="mi-p">17g protein</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="meal-card">
+    <div class="meal-head">
+      <div class="meal-time-badge">
+        <div class="meal-time">11AM</div>
+        <div class="meal-time-sub">Mid-Morning</div>
+      </div>
+      <div class="meal-info">
+        <div class="meal-name">Skill-Building Snack</div>
+        <div class="meal-sub">Light · Brain fuel · You're job searching / learning now</div>
+      </div>
+      <div class="meal-cals">
+        <div class="meal-cal-num">200</div>
+        <div class="meal-cal-lbl">cal</div>
+      </div>
+    </div>
+    <div class="meal-body">
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">Cottage Cheese (½ cup) + Berries</div>
+          <div class="mi-note">Slow casein keeps you full through your morning focus block</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">150 cal</div>
+          <div class="mi-p">14g protein</div>
+        </div>
+      </div>
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">Green Tea or Black Coffee (2nd cup)</div>
+          <div class="mi-note">EGCG boosts focus + metabolism · Last caffeine before noon</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">5 cal</div>
+          <div class="mi-p">0g</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="meal-card">
+    <div class="meal-head">
+      <div class="meal-time-badge">
+        <div class="meal-time">1–2PM</div>
+        <div class="meal-time-sub">Lunch</div>
+      </div>
+      <div class="meal-info">
+        <div class="meal-name">Lunch — High Protein + Moderate Carb</div>
+        <div class="meal-sub">Keeps energy up for afternoon job search · Don't skip this</div>
+      </div>
+      <div class="meal-cals">
+        <div class="meal-cal-num">500</div>
+        <div class="meal-cal-lbl">cal</div>
+      </div>
+    </div>
+    <div class="meal-body">
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">Chicken Breast or Canned Tuna (6 oz)</div>
+          <div class="mi-note">Lean protein · Season well · Prep the night before to save time</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">185 cal</div>
+          <div class="mi-p">38g protein</div>
+        </div>
+      </div>
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">½ Cup Rice or Sweet Potato</div>
+          <div class="mi-note">Sustained afternoon energy · Small portion since you're not training again</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">150 cal</div>
+          <div class="mi-p">3g protein</div>
+        </div>
+      </div>
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">Large Mixed Salad + Olive Oil</div>
+          <div class="mi-note">Fiber keeps you full · Micronutrients support recovery all day</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">120 cal</div>
+          <div class="mi-p">3g protein</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="meal-card">
+    <div class="meal-head">
+      <div class="meal-time-badge">
+        <div class="meal-time">4PM</div>
+        <div class="meal-time-sub">Afternoon</div>
+      </div>
+      <div class="meal-info">
+        <div class="meal-name">Afternoon Snack</div>
+        <div class="meal-sub">Protein-forward · Bridges lunch to dinner · Kills cravings</div>
+      </div>
+      <div class="meal-cals">
+        <div class="meal-cal-num">180</div>
+        <div class="meal-cal-lbl">cal</div>
+      </div>
+    </div>
+    <div class="meal-body">
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">Hard Boiled Eggs (2) or Turkey Slices</div>
+          <div class="mi-note">Fast to prep · Complete protein · Keep some in the fridge ready</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">140 cal</div>
+          <div class="mi-p">12g protein</div>
+        </div>
+      </div>
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">Apple or Orange</div>
+          <div class="mi-note">Natural sugar + fiber · Keeps afternoon energy steady</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">90 cal</div>
+          <div class="mi-p">1g protein</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="meal-card">
+    <div class="meal-head">
+      <div class="meal-time-badge">
+        <div class="meal-time">7PM</div>
+        <div class="meal-time-sub">Dinner</div>
+      </div>
+      <div class="meal-info">
+        <div class="meal-name">Dinner — High Protein, Low Carb</div>
+        <div class="meal-sub">Lean protein + vegetables · Minimal carbs at night</div>
+      </div>
+      <div class="meal-cals">
+        <div class="meal-cal-num">450</div>
+        <div class="meal-cal-lbl">cal</div>
+      </div>
+    </div>
+    <div class="meal-body">
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">Salmon, Shrimp, or Lean Beef (6–8 oz)</div>
+          <div class="mi-note">Salmon = omega-3s reduce inflammation · Best muscle recovery food</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">300 cal</div>
+          <div class="mi-p">40g protein</div>
+        </div>
+      </div>
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">Roasted Vegetables (broccoli, asparagus, zucchini)</div>
+          <div class="mi-note">Unlimited — fill the plate · Zero guilt · High volume, low calorie</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">80 cal</div>
+          <div class="mi-p">5g protein</div>
+        </div>
+      </div>
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">½ Avocado</div>
+          <div class="mi-note">Healthy fat · Skip on rest days if you're over calories</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">120 cal</div>
+          <div class="mi-p">2g protein</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="meal-card">
+    <div class="meal-head">
+      <div class="meal-time-badge">
+        <div class="meal-time">9PM</div>
+        <div class="meal-time-sub">Before Bed</div>
+      </div>
+      <div class="meal-info">
+        <div class="meal-name">Night Protein <span class="timing-badge tb-key">Muscle Builder</span></div>
+        <div class="meal-sub">Casein feeds muscles overnight · You wake up recovered · Sleep by 10pm</div>
+      </div>
+      <div class="meal-cals">
+        <div class="meal-cal-num">120</div>
+        <div class="meal-cal-lbl">cal</div>
+      </div>
+    </div>
+    <div class="meal-body">
+      <div class="meal-item">
+        <div class="mi-left">
+          <div class="mi-name">Cottage Cheese (½ cup) OR Casein Protein Shake</div>
+          <div class="mi-note">Digests over 7–8 hrs · You train fasted at 5am so muscles need this overnight</div>
+        </div>
+        <div class="mi-macros">
+          <div class="mi-cal">120 cal</div>
+          <div class="mi-p">14–25g protein</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- WATER TRACKER -->
+<div class="sec-head"><div class="sec-label">Daily Water Goal</div><div class="sec-line"></div></div>
+<div class="water-card" style="margin:0 20px">
+  <div class="water-title">💧 Water Tracker — Goal: 12 Glasses (3L+)</div>
+  <div class="water-glasses" id="waterGlasses"></div>
+  <div class="water-status" id="waterStatus">Tap glasses to track · <span>0/12</span> glasses today</div>
+</div>
+
+<!-- SNACKS -->
+<div class="sec-head"><div class="sec-label">Approved Snack Library</div><div class="sec-line"></div></div>
+<div class="snack-filter">
+  <button class="snack-pill active" onclick="filterSnacks('all',this)">All</button>
+  <button class="snack-pill" onclick="filterSnacks('fruit',this)">🍎 Fruits</button>
+  <button class="snack-pill" onclick="filterSnacks('protein',this)">🥩 Protein</button>
+  <button class="snack-pill" onclick="filterSnacks('carb',this)">🌾 Carbs & Oats</button>
+  <button class="snack-pill" onclick="filterSnacks('treat',this)">🍬 Treats</button>
+  <button class="snack-pill" onclick="filterSnacks('drink',this)">🥤 Drinks</button>
+</div>
+<div class="snack-grid" id="snackGrid"></div>
+
+<!-- NUTRITION RULES -->
+<div class="sec-head"><div class="sec-label">The Golden Rules</div><div class="sec-line"></div></div>
+<div class="rules">
+  <div class="rule-card">
+    <div class="rule-icon">🥩</div>
+    <div>
+      <div class="rule-title">Protein First, Every Single Meal</div>
+      <div class="rule-body">Before you eat anything else, get your protein in. <strong>135g per day minimum.</strong> This preserves every lb of muscle while you cut fat. It also fills you up — you'll naturally eat less of everything else.</div>
+    </div>
+  </div>
+  <div class="rule-card">
+    <div class="rule-icon">⏰</div>
+    <div>
+      <div class="rule-title">Biggest Carbs Go Post-Workout</div>
+      <div class="rule-body">You train fasted so your post-workout breakfast is the most important meal. <strong>Load carbs immediately after training.</strong> On rest days (Sunday), keep carbs under 130g — no training means no need for a full tank.</div>
+    </div>
+  </div>
+  <div class="rule-card">
+    <div class="rule-icon">🌙</div>
+    <div>
+      <div class="rule-title">Stop Eating by 10PM</div>
+      <div class="rule-body">Except for your casein/cottage cheese. <strong>You're waking at 5am to train — that means lights out by 9:30–10pm.</strong> Sleep is when you recover from fasted training. Late-night eating and poor sleep are the two things that will stall your results fastest.</div>
+    </div>
+  </div>
+  <div class="rule-card">
+    <div class="rule-icon">🍬</div>
+    <div>
+      <div class="rule-title">Treats Are Allowed — With Rules</div>
+      <div class="rule-body">Dark chocolate, gummy bears, a cookie — <strong>fit it in your calories and you're fine.</strong> Deprivation causes binges. One treat per day keeps you consistent for 133 days. Consistency beats perfection every time.</div>
+    </div>
+  </div>
+  <div class="rule-card">
+    <div class="rule-icon">💧</div>
+    <div>
+      <div class="rule-title">3–4L Water Every Day</div>
+      <div class="rule-body">Muscles look <strong>flat when dehydrated and full when hydrated.</strong> At your size, 3L is the floor. Drink a full glass first thing in the morning before coffee — it rehydrates you after 8 hrs without water.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <a href="index.html" class="bn-item">
+    <div class="bn-icon">📋</div>
+    <div class="bn-label">Program</div>
+  </a>
+  <a href="progress.html" class="bn-item">
+    <div class="bn-icon">📈</div>
+    <div class="bn-label">Progress</div>
+  </a>
+  <a href="nutrition.html" class="bn-item active">
+    <div class="bn-icon">🥗</div>
+    <div class="bn-label">Nutrition</div>
+  </a>
+</div>
+
+<script>
+const SNACKS = [
+  {cat:'fruit',emoji:'🍌',name:'Banana',serving:'1 medium',cal:105,pro:1,carb:27,timing:'Pre-workout fuel — eat 45 min before'},
+  {cat:'fruit',emoji:'🍎',name:'Apple',serving:'1 medium',cal:95,pro:0,carb:25,timing:'Morning or pre-workout'},
+  {cat:'fruit',emoji:'🍓',name:'Strawberries',serving:'1 cup',cal:49,pro:1,carb:12,timing:'Post-workout or afternoon — antioxidants aid recovery'},
+  {cat:'fruit',emoji:'🫐',name:'Blueberries',serving:'1 cup',cal:84,pro:1,carb:21,timing:'Best anti-inflammatory fruit — eat daily if you can'},
+  {cat:'fruit',emoji:'🍇',name:'Grapes',serving:'1 cup',cal:104,pro:1,carb:27,timing:'Natural sugar — pre-workout only'},
+  {cat:'fruit',emoji:'🍊',name:'Orange',serving:'1 large',cal:87,pro:2,carb:22,timing:'Morning — vitamin C boosts testosterone'},
+  {cat:'fruit',emoji:'🥭',name:'Mango',serving:'½ cup',cal:60,pro:1,carb:15,timing:'Pre-workout — fast carbs, high sugar so portion carefully'},
+  {cat:'fruit',emoji:'🍑',name:'Peach',serving:'1 medium',cal:58,pro:1,carb:14,timing:'Low calorie, hydrating — any time'},
+  {cat:'fruit',emoji:'🍈',name:'Watermelon',serving:'2 cups',cal:85,pro:2,carb:21,timing:'Post-workout hydration — also contains citrulline (pump!)'},
+  {cat:'fruit',emoji:'🥝',name:'Kiwi',serving:'2 kiwis',cal:84,pro:2,carb:20,timing:'Before bed — improves sleep quality'},
+  {cat:'protein',emoji:'🥛',name:'Greek Yogurt (0% plain)',serving:'150g',cal:90,pro:17,carb:5,timing:'Pre-workout or morning — best value protein snack'},
+  {cat:'protein',emoji:'🧀',name:'Cottage Cheese',serving:'½ cup',cal:110,pro:14,carb:5,timing:'Afternoon or before bed — slow casein protein'},
+  {cat:'protein',emoji:'🥚',name:'Hard Boiled Eggs',serving:'2 eggs',cal:140,pro:12,carb:1,timing:'Any time — complete protein with healthy fat'},
+  {cat:'protein',emoji:'🐟',name:'Canned Tuna',serving:'1 can (3oz)',cal:100,pro:22,carb:0,timing:'Best protein-per-calorie snack — use for hunger'},
+  {cat:'protein',emoji:'🥩',name:'Turkey Slices (deli)',serving:'4 slices',cal:90,pro:14,carb:2,timing:'Afternoon — low calorie, filling'},
+  {cat:'protein',emoji:'🧆',name:'Edamame',serving:'½ cup',cal:95,pro:9,carb:8,timing:'Afternoon snack — plant protein + fiber'},
+  {cat:'protein',emoji:'🥜',name:'Almonds',serving:'23 nuts (1oz)',cal:160,pro:6,carb:6,timing:'Pre-workout or afternoon — healthy fat + protein'},
+  {cat:'protein',emoji:'🎯',name:'Protein Bar (low sugar)',serving:'1 bar',cal:200,pro:20,carb:20,timing:'Emergency snack — not a meal replacement, hit macros first'},
+  {cat:'carb',emoji:'🌾',name:'Overnight Oats',serving:'½ cup dry oats + milk',cal:280,pro:12,carb:45,timing:'Breakfast or pre-workout — add protein powder for a boost'},
+  {cat:'carb',emoji:'🍚',name:'Rice Cakes (plain)',serving:'2 cakes',cal:70,pro:1,carb:15,timing:'Post-workout with peanut butter — fast carb hit'},
+  {cat:'carb',emoji:'🫙',name:'Oat Energy Bites',serving:'2 bites',cal:150,pro:5,carb:20,timing:'Pre-workout — make a batch Sunday for the week'},
+  {cat:'carb',emoji:'🍞',name:'Ezekiel Bread',serving:'1 slice',cal:80,pro:4,carb:15,timing:'Morning toast — complete protein, sprouted grain'},
+  {cat:'carb',emoji:'🫘',name:'Chickpeas (roasted)',serving:'¼ cup',cal:120,pro:6,carb:20,timing:'Afternoon — fiber + protein combo, great crunch'},
+  {cat:'carb',emoji:'🌰',name:'Peanut Butter',serving:'1 tbsp',cal:95,pro:4,carb:3,timing:'Add to oats, rice cakes, or apple — don\'t overdo it'},
+  {cat:'carb',emoji:'🫐',name:'Açaí Bowl (small)',serving:'Small bowl',cal:200,pro:4,carb:35,timing:'Post-workout only — high sugar, high antioxidant'},
+  {cat:'treat',emoji:'🍫',name:'Dark Chocolate (70%+)',serving:'1–2 squares (20g)',cal:120,pro:2,carb:10,timing:'Evening — reduces cortisol, antioxidants. Under 2 squares.'},
+  {cat:'treat',emoji:'🐻',name:'Gummy Bears',serving:'10–12 pieces',cal:90,pro:0,carb:22,timing:'Post-workout ONLY — fast sugar spikes insulin to drive nutrients to muscles'},
+  {cat:'treat',emoji:'🍪',name:'Oat Cookie (homemade)',serving:'1 cookie',cal:130,pro:3,carb:20,timing:'Afternoon treat — make with oats, banana, protein powder'},
+  {cat:'treat',emoji:'🧁',name:'Protein Mug Cake',serving:'1 mug',cal:160,pro:18,carb:12,timing:'Evening dessert — satisfies sweet tooth with 18g protein'},
+  {cat:'treat',emoji:'🍦',name:'Halo Top / Low-Cal Ice Cream',serving:'½ cup',cal:100,pro:8,carb:14,timing:'Evening — fits macros, satisfies cravings. Read the label.'},
+  {cat:'treat',emoji:'🍿',name:'Popcorn (air-popped)',serving:'3 cups',cal:93,pro:3,carb:19,timing:'Evening — high volume, low calorie. No butter.'},
+  {cat:'treat',emoji:'🫙',name:'Peanut Butter Cups (dark)',serving:'1 mini',cal:80,pro:1,carb:8,timing:'1 per day max — a treat, not a staple'},
+  {cat:'drink',emoji:'☕',name:'Black Coffee',serving:'1 cup',cal:5,pro:0,carb:0,timing:'Morning + pre-workout — boosts fat burning by 10–16%'},
+  {cat:'drink',emoji:'🍵',name:'Green Tea',serving:'1 cup',cal:2,pro:0,carb:0,timing:'Morning or afternoon — EGCG boosts metabolism'},
+  {cat:'drink',emoji:'💪',name:'Protein Shake (whey)',serving:'1 scoop + water',cal:120,pro:25,carb:3,timing:'Post-workout within 30 min OR before bed'},
+  {cat:'drink',emoji:'🧃',name:'Coconut Water',serving:'1 cup (240ml)',cal:46,pro:2,carb:9,timing:'Intra or post-workout — natural electrolytes'},
+  {cat:'drink',emoji:'🫧',name:'Sparkling Water',serving:'Unlimited',cal:0,pro:0,carb:0,timing:'Any time — kills cravings, counts toward water goal'},
+  {cat:'drink',emoji:'🥛',name:'Chocolate Milk (low fat)',serving:'1 cup',cal:150,pro:8,carb:26,timing:'Post-workout — old school recovery drink, actually works'},
+];
+
+let snackFilter = 'all';
+
+function filterSnacks(cat, btn) {
+  snackFilter = cat;
+  document.querySelectorAll('.snack-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  renderSnacks();
+}
+
+function renderSnacks() {
+  const filtered = snackFilter==='all' ? SNACKS : SNACKS.filter(s=>s.cat===snackFilter);
+  const catColors = {fruit:'cat-fruit',protein:'cat-protein',carb:'cat-carb',treat:'cat-treat',drink:'cat-drink'};
+  const catNames = {fruit:'🍎 Fruit',protein:'💪 Protein',carb:'🌾 Carb',treat:'🍬 Treat',drink:'🥤 Drink'};
+
+  document.getElementById('snackGrid').innerHTML = filtered.map(s=>`
+    <div class="snack-card">
+      <div class="snack-cat-label ${catColors[s.cat]}">${catNames[s.cat]}</div>
+      <span class="snack-emoji">${s.emoji}</span>
+      <div class="snack-name">${s.name}</div>
+      <div class="snack-serving">${s.serving}</div>
+      <div class="snack-macros">
+        <span class="sm-tag sm-cal">${s.cal} cal</span>
+        <span class="sm-tag sm-pro">${s.pro}g P</span>
+        <span class="sm-tag sm-carb">${s.carb}g C</span>
+      </div>
+      <div class="snack-timing">${s.timing}</div>
+    </div>
+  `).join('');
+}
+
+function initWater() {
+  const today = new Date().toISOString().split('T')[0];
+  const saved = JSON.parse(localStorage.getItem('nw_water')||'{}');
+  if(saved.date!==today) {
+    localStorage.setItem('nw_water', JSON.stringify({date:today,count:0}));
+  }
+  renderWater();
+}
+
+function renderWater() {
+  const data = JSON.parse(localStorage.getItem('nw_water')||'{"count":0}');
+  const count = data.count||0;
+  const glasses = document.getElementById('waterGlasses');
+  glasses.innerHTML = Array.from({length:12},(_,i)=>`
+    <div class="glass ${i<count?'filled':''}" onclick="toggleGlass(${i})">${i<count?'💧':'🫙'}</div>
+  `).join('');
+  const msgs = ['Start drinking!','Keep going!','Halfway there!','Almost there!','You\'re crushing it!','Maxed out! 🏆'];
+  const msgIdx = Math.min(Math.floor(count/2.5),5);
+  document.getElementById('waterStatus').innerHTML = `${msgs[msgIdx]} · <span>${count}/12 glasses today</span>`;
+}
+
+function toggleGlass(idx) {
+  const data = JSON.parse(localStorage.getItem('nw_water')||'{"count":0}');
+  const today = new Date().toISOString().split('T')[0];
+  const count = data.count||0;
+  const newCount = idx < count ? idx : idx+1;
+  localStorage.setItem('nw_water', JSON.stringify({date:today,count:newCount}));
+  renderWater();
+}
+
+function toggleDay(day) {
+  document.querySelectorAll('.dt-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+renderSnacks();
+initWater();
+
+setTimeout(()=>{
+  document.querySelectorAll('.macro-bar').forEach(b=>{
+    const w = b.style.width;
+    b.style.width='0';
+    setTimeout(()=>b.style.width=w,100);
+  });
+},200);
+</script>
+</body>
+</html>

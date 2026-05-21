@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIGHTWING PROTOCOL V2</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070a;
+  --surface: #111115;
+  --card: #16161c;
+  --border: #1e1e26;
+  --border2: #2a2a36;
+  --lime: #d4f53c;
+  --lime2: #9ab52a;
+  --lime-glow: rgba(212,245,60,0.08);
+  --white: #efefef;
+  --muted: #6b6b80;
+  --dim: #333344;
+  --orange: #ff7b3a;
+  --gold: #ffc040;
+  --red: #ff4560;
+  --blue: #60b0ff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;overflow-x:hidden;min-height:100vh}
+
+/* NAV */
+.sticky-nav{position:sticky;top:0;z-index:100;background:rgba(7,7,10,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nav-item{padding:14px 18px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.2s}
+.nav-item:hover,.nav-item.active{color:var(--lime);border-bottom-color:var(--lime)}
+
+/* HERO */
+.hero{padding:52px 28px 44px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-80px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(212,245,60,0.05) 0%,transparent 65%);pointer-events:none}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(212,245,60,0.1);border:1px solid rgba(212,245,60,0.25);border-radius:100px;padding:5px 14px;margin-bottom:20px}
+.badge-dot{width:6px;height:6px;background:var(--lime);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.badge-text{font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--lime)}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,18vw,120px);line-height:.88;letter-spacing:1px;color:var(--white)}
+.hero-title .accent{color:var(--lime)}
+.hero-sub{margin-top:18px;font-size:13px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.hero-stats{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+.stat-chip{background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:10px 16px}
+.stat-chip .val{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--lime);line-height:1}
+.stat-chip .lbl{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+
+/* PROGRESS BAR */
+.progress-wrap{padding:0 28px 32px}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.progress-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.progress-days{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--lime)}
+.progress-track{height:6px;background:var(--border2);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--lime2),var(--lime));border-radius:3px;transition:width 1.5s ease}
+.phase-markers{display:flex;justify-content:space-between;margin-top:8px}
+.phase-mark{font-size:10px;color:var(--dim);letter-spacing:1px}
+
+/* SECTION HEADERS */
+.sec-head{padding:36px 28px 20px;display:flex;align-items:center;gap:14px}
+.sec-line{flex:1;height:1px;background:var(--border)}
+.sec-label{font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--lime);white-space:nowrap}
+
+/* PHASE TIMELINE */
+.phases{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin:0 28px 32px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.phase{background:var(--card);padding:20px;position:relative}
+.phase.now{background:linear-gradient(135deg,#14141a,#1a1a24)}
+.phase-n{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--lime2);margin-bottom:8px}
+.phase-name{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--white);margin-bottom:4px}
+.phase-dates{font-size:11px;color:var(--muted);margin-bottom:10px}
+.phase-desc{font-size:12px;color:var(--muted);line-height:1.6}
+.now-pip{position:absolute;top:16px;right:16px;width:8px;height:8px;background:var(--lime);border-radius:50%;animation:blink 2s infinite}
+
+/* WEEK VISUAL */
+.week-strip{margin:0 28px 32px;display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.week-day{background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:10px 6px;text-align:center}
+.week-day.train{border-color:rgba(212,245,60,0.3);background:rgba(212,245,60,0.04)}
+.week-day.rest-day{opacity:0.4}
+.week-day.fat-burn{border-color:rgba(255,123,58,0.35);background:rgba(255,123,58,0.04)}
+.wd-name{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.wd-icon{font-size:18px;margin-bottom:6px}
+.wd-label{font-size:9px;color:var(--muted);line-height:1.4}
+.week-day.train .wd-name{color:var(--lime)}
+.week-day.fat-burn .wd-name{color:var(--orange)}
+
+/* DAY CARDS */
+.days-container{padding:0 28px 16px;display:flex;flex-direction:column;gap:20px}
+.day-card{background:var(--card);border:1px solid var(--border2);border-radius:16px;overflow:hidden}
+.day-card.priority{border-color:rgba(212,245,60,0.25)}
+.day-card.fatburn{border-color:rgba(255,123,58,0.25)}
+
+/* DAY HEADER */
+.dc-head{padding:22px 22px 18px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--border)}
+.dc-left{}
+.dc-day{font-family:'Bebas Neue',sans-serif;font-size:48px;line-height:.9;color:var(--lime);letter-spacing:0}
+.day-card.fatburn .dc-day{color:var(--orange)}
+.dc-name{font-size:16px;font-weight:600;color:var(--white);margin-top:6px}
+.dc-focus{font-size:12px;color:var(--muted);margin-top:3px;font-style:italic}
+.dc-meta{text-align:right}
+.dc-rest{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);background:var(--border);padding:5px 12px;border-radius:100px}
+.dc-time{font-size:11px;color:var(--muted);margin-top:8px}
+
+/* WARM UP / COOL DOWN BLOCKS */
+.ritual-block{padding:16px 22px;border-bottom:1px solid var(--border)}
+.ritual-title{font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.rt-warm{color:var(--orange)}
+.rt-cool{color:var(--blue)}
+.ritual-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.ritual-item{background:var(--surface);border-radius:8px;padding:10px 12px}
+.ri-name{font-size:13px;font-weight:500;color:var(--white);margin-bottom:3px}
+.ri-detail{font-size:11px;color:var(--muted)}
+
+/* WORKOUT BLOCK */
+.workout-block{padding:16px 22px}
+.ex-list{display:flex;flex-direction:column;gap:2px}
+.ex-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.035)}
+.ex-row:last-child{border-bottom:none}
+.ex-num{font-size:10px;font-weight:600;color:var(--dim);width:14px;flex-shrink:0;padding-top:3px}
+.ex-body{flex:1;min-width:0}
+.ex-name{font-size:14px;font-weight:500;color:var(--white);line-height:1.3}
+.ex-sub{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5}
+.tags{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle}
+.tag{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:4px}
+.t-new{background:rgba(212,245,60,0.12);color:var(--lime)}
+.t-key{background:rgba(255,192,64,0.12);color:var(--gold)}
+.t-move{background:rgba(255,123,58,0.12);color:var(--orange)}
+.t-secret{background:rgba(96,176,255,0.12);color:var(--blue)}
+.ex-sets{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--muted);white-space:nowrap;padding-top:1px}
+
+/* CARDIO EMBED */
+.cardio-embed{background:rgba(255,123,58,0.05);border:1px solid rgba(255,123,58,0.15);border-radius:10px;padding:12px 14px;margin-bottom:2px}
+.cardio-embed .ex-name{color:var(--orange)}
+
+/* REST DAY CARD */
+.rest-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px 22px;display:flex;align-items:center;gap:18px;opacity:0.55}
+.rest-big{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--dim);line-height:1}
+.rest-info-name{font-size:16px;font-weight:600;color:var(--muted)}
+.rest-info-sub{font-size:12px;color:var(--dim);margin-top:4px;line-height:1.6}
+
+/* RESULTS ACCELERATORS */
+.accel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:0 28px 32px}
+.accel-card{background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:20px}
+.accel-icon{font-size:24px;margin-bottom:12px}
+.accel-title{font-size:14px;font-weight:600;color:var(--white);margin-bottom:8px}
+.accel-body{font-size:12px;color:var(--muted);line-height:1.7}
+.accel-highlight{color:var(--lime);font-weight:500}
+
+/* NUTRITION */
+.nutrition-bar{margin:0 28px 32px;background:var(--card);border:1px solid var(--border2);border-radius:14px;overflow:hidden}
+.nb-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.nb-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--white)}
+.nb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.nb-item{padding:18px 22px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.nb-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.nb-val{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--lime)}
+.nb-sub{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
+
+.footer{border-top:1px solid var(--border);padding:28px;text-align:center;font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+
+@media(max-width:640px){
+  .hero{padding:36px 20px 32px}
+  .progress-wrap{padding:0 20px 24px}
+  .sec-head{padding:28px 20px 16px}
+  .phases{margin:0 20px 24px;grid-template-columns:1fr}
+  .week-strip{margin:0 20px 24px;grid-template-columns:repeat(7,1fr);gap:4px}
+  .week-day{padding:8px 4px}
+  .wd-icon{font-size:14px}
+  .wd-label{display:none}
+  .days-container{padding:0 20px 16px}
+  .accel-grid{margin:0 20px 24px}
+  .nutrition-bar{margin:0 20px 24px}
+  .ritual-grid{grid-template-columns:1fr 1fr}
+  .nb-grid{grid-template-columns:1fr 1fr}
+  .phases .phase{border-right:none;border-bottom:1px solid var(--border)}
+}
+</style>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#d4f53c"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Nightwing"></head>
+<body>
+
+<!-- NAV -->
+<nav class="sticky-nav">
+  <a href="progress.html" style="padding:12px 18px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#6b6b80;text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap">📈 Progress</a><div class="nav-item" onclick="scrollTo('plan')">Program</div>
+  <div class="nav-item" onclick="scrollTo('monday')">Mon</div>
+  <div class="nav-item" onclick="scrollTo('tuesday')">Tue</div>
+  <div class="nav-item" onclick="scrollTo('wednesday')">Wed</div>
+  <div class="nav-item" onclick="scrollTo('thursday')">Thu</div>
+  <div class="nav-item" onclick="scrollTo('friday')">Fri</div>
+  <div class="nav-item" onclick="scrollTo('saturday')">Sat</div>
+  <div class="nav-item" onclick="scrollTo('sunday')">Sun</div>
+  <div class="nav-item" onclick="scrollTo('accelerators')">Results</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="plan">
+  <div class="badge"><span class="badge-dot"></span><span class="badge-text">Nightwing Protocol · V2 · 7-Day</span></div>
+  <div class="hero-title">NIGHT<br><span class="accent">WING</span></div>
+  <div class="hero-sub">Superhero Aesthetic · Full Definition · Every Muscle</div>
+  <div class="hero-stats">
+    <div class="stat-chip"><div class="val" id="daysLeft">--</div><div class="lbl">Days to Oct 1</div></div>
+    <div class="stat-chip"><div class="val">6</div><div class="lbl">Training Days</div></div>
+    <div class="stat-chip"><div class="val">1</div><div class="lbl">Full Rest Day</div></div>
+    <div class="stat-chip"><div class="val">7</div><div class="lbl">Warm-Ups Included</div></div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-header">
+    <div class="progress-label">Progress to Oct 1</div>
+    <div class="progress-days" id="pctLeft">--%</div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="pBar" style="width:0%"></div></div>
+  <div class="phase-markers">
+    <span class="phase-mark">▲ NOW</span>
+    <span class="phase-mark">Jul 1 — Lean Phase</span>
+    <span class="phase-mark">Aug 15 — Peak</span>
+    <span class="phase-mark">Oct 1 🏁</span>
+  </div>
+</div>
+
+<!-- PHASES -->
+<div class="sec-head"><div class="sec-label">3-Phase Roadmap</div><div class="sec-line"></div></div>
+<div class="phases">
+  <div class="phase now">
+    <div class="now-pip"></div>
+    <div class="phase-n">Phase 1 · Now</div>
+    <div class="phase-name">SHOCK THE BODY</div>
+    <div class="phase-dates">May 21 → Jul 1</div>
+    <div class="phase-desc">New stimulus = fast visible results. 6 days on, 1 off. 60s rest. Progressive overload every single week. Cardio embedded in warm-ups.</div>
+  </div>
+  <div class="phase">
+    <div class="phase-n">Phase 2</div>
+    <div class="phase-name">LEAN INTO IT</div>
+    <div class="phase-dates">Jul 1 → Aug 15</div>
+    <div class="phase-desc">Drop rest to 45s. Add 1 extra fat-burn set per session. Slight calorie reduction on non-training days. This is where definition really kicks in.</div>
+  </div>
+  <div class="phase">
+    <div class="phase-n">Phase 3</div>
+    <div class="phase-name">PEAK CONDITION</div>
+    <div class="phase-dates">Aug 15 → Oct 1</div>
+    <div class="phase-desc">Maintain all muscle. Strip last fat layer. Carb cycle. High protein. The physique that was built in phases 1 and 2 is now fully revealed.</div>
+  </div>
+</div>
+
+<!-- WEEK STRIP -->
+<div class="sec-head"><div class="sec-label">Your New Week</div><div class="sec-line"></div></div>
+<div class="week-strip">
+  <div class="week-day train">
+    <div class="wd-name">MON</div>
+    <div class="wd-icon">💪</div>
+    <div class="wd-label">Upper Push</div>
+  </div>
+  <div class="week-day train">
+    <div class="wd-name">TUE</div>
+    <div class="wd-icon">🔙</div>
+    <div class="wd-label">Back + Biceps</div>
+  </div>
+  <div class="week-day train">
+    <div class="wd-name">WED</div>
+    <div class="wd-icon">🔥</div>
+    <div class="wd-label">Core + Burn</div>
+  </div>
+  <div class="week-day train">
+    <div class="wd-name">THU</div>
+    <div class="wd-icon">🦵</div>
+    <div class="wd-label">Legs + Core</div>
+  </div>
+  <div class="week-day fat-burn">
+    <div class="wd-name">FRI</div>
+    <div class="wd-icon">⚡</div>
+    <div class="wd-label">Fat Burn + Weak Points</div>
+  </div>
+  <div class="week-day train">
+    <div class="wd-name">SAT</div>
+    <div class="wd-icon">🎯</div>
+    <div class="wd-label">Shoulders + Arms</div>
+  </div>
+  <div class="week-day rest-day">
+    <div class="wd-name">SUN</div>
+    <div class="wd-icon">😴</div>
+    <div class="wd-label">Full Rest</div>
+  </div>
+</div>
+
+<!-- DAYS -->
+<div class="sec-head"><div class="sec-label">Full Daily Program</div><div class="sec-line"></div></div>
+<div class="days-container">
+
+<!-- MONDAY -->
+<div class="day-card priority" id="monday">
+  <div class="dc-head">
+    <div class="dc-left">
+      <div class="dc-day">MON</div>
+      <div class="dc-name">Upper Push + Shoulders</div>
+      <div class="dc-focus">Chest · OHP · Lateral Raises · Triceps</div>
+    </div>
+    <div class="dc-meta">
+      <div class="dc-rest">60s rest</div>
+      <div class="dc-time">~65 min total</div>
+    </div>
+  </div>
+
+  <!-- WARM UP -->
+  <div class="ritual-block">
+    <div class="ritual-title rt-warm">🔥 Warm-Up · 8 min · Gets blood into chest + shoulders before you lift</div>
+    <div class="ritual-grid">
+      <div class="ritual-item"><div class="ri-name">Incline Treadmill Walk</div><div class="ri-detail">5 min · 10% grade · You're fasted — this primes fat burning</div></div>
+      <div class="ritual-item"><div class="ri-name">Arm Circles</div><div class="ri-detail">30s fwd + 30s back · Shoulder mobility</div></div>
+      <div class="ritual-item"><div class="ri-name">Band Pull-Aparts</div><div class="ri-detail">2×15 · Activates rear delts before pushing</div></div>
+      <div class="ritual-item"><div class="ri-name">Chest Opener Stretch</div><div class="ri-detail">30s each side · Doorway or cable stack</div></div>
+    </div>
+  </div>
+
+  <!-- WORKOUT -->
+  <div class="workout-block">
+    <div class="ex-list">
+      <div class="ex-row">
+        <div class="ex-num">1</div>
+        <div class="ex-body">
+          <div class="ex-name">Overhead Press Machine <span class="tags"><span class="tag t-new">NEW</span></span></div>
+          <div class="ex-sub">Lead with shoulders, not chest · Replaces flat Chest Press</div>
+        </div>
+        <div class="ex-sets">4×12</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">2</div>
+        <div class="ex-body">
+          <div class="ex-name">Incline Chest Press Machine</div>
+          <div class="ex-sub">Upper chest only · Last: 50 lbs 3×12 → add a set</div>
+        </div>
+        <div class="ex-sets">4×12</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">3</div>
+        <div class="ex-body">
+          <div class="ex-name">Low Cable Chest Fly <span class="tags"><span class="tag t-move">ADJUSTED</span></span></div>
+          <div class="ex-sub">Cable set LOW — targets upper chest sweep, not mid</div>
+        </div>
+        <div class="ex-sets">3×15</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">4</div>
+        <div class="ex-body">
+          <div class="ex-name">Lateral Raises <span class="tags"><span class="tag t-key">KEY ⭐⭐</span></span></div>
+          <div class="ex-sub">The #1 exercise for the superhero look · Slow and controlled, slight lean fwd</div>
+        </div>
+        <div class="ex-sets">5×15</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">5</div>
+        <div class="ex-body">
+          <div class="ex-name">Cable Front Raise <span class="tags"><span class="tag t-new">NEW</span></span></div>
+          <div class="ex-sub">Anterior delt fullness · The muscle visible in a t-shirt</div>
+        </div>
+        <div class="ex-sets">3×12</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">6</div>
+        <div class="ex-body">
+          <div class="ex-name">Overhead Cable Tricep Extension <span class="tags"><span class="tag t-new">NEW</span></span></div>
+          <div class="ex-sub">Hits tricep long head — makes arms look big from every angle</div>
+        </div>
+        <div class="ex-sets">3×15</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COOL DOWN -->
+  <div class="ritual-block" style="border-bottom:none;border-top:1px solid var(--border)">
+    <div class="ritual-title rt-cool">❄️ Cool-Down · 7 min · Reduce soreness, aid recovery</div>
+    <div class="ritual-grid">
+      <div class="ritual-item"><div class="ri-name">Cross-Body Shoulder Stretch</div><div class="ri-detail">45s each side · Release shoulder tension</div></div>
+      <div class="ritual-item"><div class="ri-name">Chest Doorway Stretch</div><div class="ri-detail">60s · Counteract the push pattern</div></div>
+      <div class="ritual-item"><div class="ri-name">Tricep Overhead Stretch</div><div class="ri-detail">30s each arm · Lengthen post-lift</div></div>
+      <div class="ritual-item"><div class="ri-name">Deep Breathing</div><div class="ri-detail">10 slow breaths · Lower cortisol</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TUESDAY -->
+<div class="day-card priority" id="tuesday">
+  <div class="dc-head">
+    <div class="dc-left">
+      <div class="dc-day">TUE</div>
+      <div class="dc-name">Back Width + Bicep Peak</div>
+      <div class="dc-focus">Lats · Rear Delts · V-Taper · Biceps fresh after pulls</div>
+    </div>
+    <div class="dc-meta">
+      <div class="dc-rest">60s rest</div>
+      <div class="dc-time">~70 min total</div>
+    </div>
+  </div>
+
+  <div class="ritual-block">
+    <div class="ritual-title rt-warm">🔥 Warm-Up · 8 min · Open the lats, wake up pulling muscles</div>
+    <div class="ritual-grid">
+      <div class="ritual-item"><div class="ri-name">Rowing Machine</div><div class="ri-detail">4 min easy · Fasted — start slower, body warms up faster than you think</div></div>
+      <div class="ritual-item"><div class="ri-name">Cat-Cow Stretch</div><div class="ri-detail">10 reps slow · Spinal mobility</div></div>
+      <div class="ritual-item"><div class="ri-name">Dead Hang</div><div class="ri-detail">2×20s · Decompress spine, stretch lats</div></div>
+      <div class="ritual-item"><div class="ri-name">Scapular Retractions</div><div class="ri-detail">2×15 · Activate rhomboids before rows</div></div>
+    </div>
+  </div>
+
+  <div class="workout-block">
+    <div class="ex-list">
+      <div class="ex-row">
+        <div class="ex-num">1</div>
+        <div class="ex-body">
+          <div class="ex-name">Lat Pulldown <span class="tags"><span class="tag t-key">KEY ⭐</span></span></div>
+          <div class="ex-sub">Wide grip · Last: 48 lbs · Increase weekly · Drive elbows to hips</div>
+        </div>
+        <div class="ex-sets">5×12–15</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">2</div>
+        <div class="ex-body">
+          <div class="ex-name">Assisted Pull-Ups <span class="tags"><span class="tag t-key">KEY ⭐</span></span></div>
+          <div class="ex-sub">Reduce assist weight by 5 lbs every 2 weeks · Last: 80 lbs assist</div>
+        </div>
+        <div class="ex-sets">4×10–12</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">3</div>
+        <div class="ex-body">
+          <div class="ex-name">Single Arm Dumbbell Row</div>
+          <div class="ex-sub">Brace on bench — safe solo · Last: 15 lbs · Full stretch at bottom</div>
+        </div>
+        <div class="ex-sets">4×10 ea</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">4</div>
+        <div class="ex-body">
+          <div class="ex-name">Rear Delt Cable Fly <span class="tags"><span class="tag t-key">KEY ⭐</span></span></div>
+          <div class="ex-sub">Pinch blades, don't rush · Defines the back from behind</div>
+        </div>
+        <div class="ex-sets">3×15</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">5</div>
+        <div class="ex-body">
+          <div class="ex-name">Straight Arm Pulldown</div>
+          <div class="ex-sub">Pure lat isolation — the sweep · Last: 50 lbs 3×10</div>
+        </div>
+        <div class="ex-sets">3×15</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">6</div>
+        <div class="ex-body">
+          <div class="ex-name">Dumbbell Curl <span class="tags"><span class="tag t-move">MOVED FROM SAT</span></span></div>
+          <div class="ex-sub">Biceps are already warmed up from all pulling — peak activation</div>
+        </div>
+        <div class="ex-sets">3×15</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">7</div>
+        <div class="ex-body">
+          <div class="ex-name">Hammer Curl <span class="tags"><span class="tag t-move">MOVED FROM SAT</span></span></div>
+          <div class="ex-sub">Brachialis + forearm thickness · The 3D arm look · Last: 12.5 lbs</div>
+        </div>
+        <div class="ex-sets">3×12</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ritual-block" style="border-bottom:none;border-top:1px solid var(--border)">
+    <div class="ritual-title rt-cool">❄️ Cool-Down · 7 min · Decompress the spine, open biceps</div>
+    <div class="ritual-grid">
+      <div class="ritual-item"><div class="ri-name">Child's Pose</div><div class="ri-detail">60s · Full lat stretch</div></div>
+      <div class="ritual-item"><div class="ri-name">Dead Hang</div><div class="ri-detail">2×20s · Spinal decompression post-pull</div></div>
+      <div class="ritual-item"><div class="ri-name">Bicep Wall Stretch</div><div class="ri-detail">30s each · Arm against wall, palm flat</div></div>
+      <div class="ritual-item"><div class="ri-name">Foam Roll Upper Back</div><div class="ri-detail">90s · Release thoracic tension</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WEDNESDAY -->
+<div class="day-card priority" id="wednesday">
+  <div class="dc-head">
+    <div class="dc-left">
+      <div class="dc-day">WED</div>
+      <div class="dc-name">Core Domination + Cardio Burn</div>
+      <div class="dc-focus">Weighted Abs · Serratus · Obliques · Fat Burn Finisher</div>
+    </div>
+    <div class="dc-meta">
+      <div class="dc-rest">45s rest</div>
+      <div class="dc-time">~60 min total</div>
+    </div>
+  </div>
+
+  <div class="ritual-block">
+    <div class="ritual-title rt-warm">🔥 Warm-Up · 6 min · Core activation before loading</div>
+    <div class="ritual-grid">
+      <div class="ritual-item"><div class="ri-name">Jump Rope or High Knees</div><div class="ri-detail">3 min · Raises core temperature fast</div></div>
+      <div class="ritual-item"><div class="ri-name">Dead Bug</div><div class="ri-detail">2×10 slow · Activates deep core</div></div>
+      <div class="ritual-item"><div class="ri-name">Hip Flexor Stretch</div><div class="ri-detail">30s each · Crucial before leg raises</div></div>
+    </div>
+  </div>
+
+  <div class="workout-block">
+    <div class="ex-list">
+      <div class="ex-row">
+        <div class="ex-num">1</div>
+        <div class="ex-body">
+          <div class="ex-name">Weighted Cable Crunch <span class="tags"><span class="tag t-key">KEY ⭐</span></span></div>
+          <div class="ex-sub">Go heavy — treat abs like any muscle · Last: 50 lbs 3×10 → 4×10</div>
+        </div>
+        <div class="ex-sets">4×10 heavy</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">2</div>
+        <div class="ex-body">
+          <div class="ex-name">Hanging Leg Raises <span class="tags"><span class="tag t-key">KEY ⭐</span></span></div>
+          <div class="ex-sub">4 count down · No swinging · Last: 12.5 lbs · Full lower ab</div>
+        </div>
+        <div class="ex-sets">4×12 slow</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">3</div>
+        <div class="ex-body">
+          <div class="ex-name">Ab Wheel Rollout <span class="tags"><span class="tag t-key">KEY ⭐</span></span></div>
+          <div class="ex-sub">Full extension · 3s out, 2s back · Entire core wall</div>
+        </div>
+        <div class="ex-sets">4×10 slow</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">4</div>
+        <div class="ex-body">
+          <div class="ex-name">Dumbbell Pullover <span class="tags"><span class="tag t-new">NEW</span><span class="tag t-secret">SECRET WEAPON</span></span></div>
+          <div class="ex-sub">Serratus anterior — the ribcage muscle that separates superhero physiques from regular ones</div>
+        </div>
+        <div class="ex-sets">3×12</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">5</div>
+        <div class="ex-body">
+          <div class="ex-name">Weighted Decline Sit-Up</div>
+          <div class="ex-sub">Last: 10 lbs 3×12 · Increase weight monthly</div>
+        </div>
+        <div class="ex-sets">3×12</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">6</div>
+        <div class="ex-body">
+          <div class="ex-name">Side Plank with Hip Dip</div>
+          <div class="ex-sub">Oblique cuts — visible at low body fat · Last: 3×8 → build to 3×12</div>
+        </div>
+        <div class="ex-sets">3×12 ea</div>
+      </div>
+      <!-- CARDIO FINISHER -->
+      <div class="ex-row cardio-embed">
+        <div class="ex-num">🔥</div>
+        <div class="ex-body">
+          <div class="ex-name">Cardio Finisher — Stationary Bike</div>
+          <div class="ex-sub">20 min steady state immediately post-core · Body is primed to burn fat · No excuses</div>
+        </div>
+        <div class="ex-sets">20 min</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ritual-block" style="border-bottom:none;border-top:1px solid var(--border)">
+    <div class="ritual-title rt-cool">❄️ Cool-Down · 6 min · Release core, calm the system</div>
+    <div class="ritual-grid">
+      <div class="ritual-item"><div class="ri-name">Cobra Stretch</div><div class="ri-detail">60s · Decompress spine post-crunch</div></div>
+      <div class="ritual-item"><div class="ri-name">Seated Forward Fold</div><div class="ri-detail">60s · Hamstrings + lower back</div></div>
+      <div class="ritual-item"><div class="ri-name">Lying Twist</div><div class="ri-detail">30s each side · Spinal rotation release</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- THURSDAY -->
+<div class="day-card" id="thursday">
+  <div class="dc-head">
+    <div class="dc-left">
+      <div class="dc-day">THU</div>
+      <div class="dc-name">Legs + Core</div>
+      <div class="dc-focus">Athletic Quads · Hamstrings · Calves · Core Reinforcement</div>
+    </div>
+    <div class="dc-meta">
+      <div class="dc-rest">60–90s rest</div>
+      <div class="dc-time">~65 min total</div>
+    </div>
+  </div>
+
+  <div class="ritual-block">
+    <div class="ritual-title rt-warm">🔥 Warm-Up · 8 min · Activate glutes + knees before loading</div>
+    <div class="ritual-grid">
+      <div class="ritual-item"><div class="ri-name">Bike or Walk</div><div class="ri-detail">4 min · Gets blood into legs</div></div>
+      <div class="ritual-item"><div class="ri-name">Bodyweight Squat</div><div class="ri-detail">2×15 · Full depth · Knee tracking check</div></div>
+      <div class="ritual-item"><div class="ri-name">Glute Bridge</div><div class="ri-detail">2×15 · Activates glutes before pressing</div></div>
+      <div class="ritual-item"><div class="ri-name">Leg Swings</div><div class="ri-detail">10 each direction · Hip mobility</div></div>
+    </div>
+  </div>
+
+  <div class="workout-block">
+    <div class="ex-list">
+      <div class="ex-row">
+        <div class="ex-num">1</div>
+        <div class="ex-body">
+          <div class="ex-name">Leg Press</div>
+          <div class="ex-sub">Moderate weight · Full range · Safe without spotter</div>
+        </div>
+        <div class="ex-sets">4×15</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">2</div>
+        <div class="ex-body">
+          <div class="ex-name">Bulgarian Split Squat <span class="tags"><span class="tag t-new">NEW</span></span></div>
+          <div class="ex-sub">Dumbbells only · Replaces Walking Lunges · Extreme quad + glute definition · No spotter needed</div>
+        </div>
+        <div class="ex-sets">3×10 ea</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">3</div>
+        <div class="ex-body">
+          <div class="ex-name">Leg Curl Machine</div>
+          <div class="ex-sub">Slow down phase — 3 count eccentric · Hamstring detail</div>
+        </div>
+        <div class="ex-sets">3×12</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">4</div>
+        <div class="ex-body">
+          <div class="ex-name">Standing Calf Raise <span class="tags"><span class="tag t-new">NEW</span></span></div>
+          <div class="ex-sub">2s up · 3s hold top · 3s down · The missing piece in your whole program</div>
+        </div>
+        <div class="ex-sets">4×20</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">5</div>
+        <div class="ex-body">
+          <div class="ex-name">Hanging Leg Raises <span class="tags"><span class="tag t-key">KEY ⭐</span></span></div>
+          <div class="ex-sub">Double-duty: lower abs + hip flexors · No weight needed</div>
+        </div>
+        <div class="ex-sets">5×15</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">6</div>
+        <div class="ex-body">
+          <div class="ex-name">Cable Crunch</div>
+          <div class="ex-sub">Mid-week abs reinforcement · Squeeze hard at bottom</div>
+        </div>
+        <div class="ex-sets">4×20</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ritual-block" style="border-bottom:none;border-top:1px solid var(--border)">
+    <div class="ritual-title rt-cool">❄️ Cool-Down · 8 min · Quads and hamstrings need attention post-leg day</div>
+    <div class="ritual-grid">
+      <div class="ritual-item"><div class="ri-name">Standing Quad Stretch</div><div class="ri-detail">45s each leg · Counteract the press</div></div>
+      <div class="ritual-item"><div class="ri-name">Seated Hamstring Stretch</div><div class="ri-detail">60s each leg · Full lengthening</div></div>
+      <div class="ritual-item"><div class="ri-name">Calf Stretch on Step</div><div class="ri-detail">45s each · Prevent tightness</div></div>
+      <div class="ritual-item"><div class="ri-name">Hip Flexor Lunge Stretch</div><div class="ri-detail">45s each · Release split squat tightness</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FRIDAY -->
+<div class="day-card fatburn" id="friday">
+  <div class="dc-head">
+    <div class="dc-left">
+      <div class="dc-day" style="color:var(--orange)">FRI</div>
+      <div class="dc-name">Fat Burn + Weak Point Attack</div>
+      <div class="dc-focus">This is the day that accelerates results — pure conditioning + lagging muscles</div>
+    </div>
+    <div class="dc-meta">
+      <div class="dc-rest" style="border-color:rgba(255,123,58,0.3);color:var(--orange)">30–45s rest</div>
+      <div class="dc-time">~55 min total</div>
+    </div>
+  </div>
+
+  <div class="ritual-block">
+    <div class="ritual-title rt-warm">🔥 Warm-Up · 5 min · This day is lighter — warm up is the transition</div>
+    <div class="ritual-grid">
+      <div class="ritual-item"><div class="ri-name">Incline Walk</div><div class="ri-detail">5 min · 12% grade · Ease into the burn</div></div>
+      <div class="ritual-item"><div class="ri-name">Full Body Stretch</div><div class="ri-detail">60s · Loosen everything from Mon–Thu</div></div>
+    </div>
+  </div>
+
+  <div class="workout-block">
+    <div class="ex-list">
+      <div class="ex-row cardio-embed">
+        <div class="ex-num">🔥</div>
+        <div class="ex-body">
+          <div class="ex-name">Incline Treadmill Walk</div>
+          <div class="ex-sub">The single best fat-loss tool that doesn't eat muscle · 12–15% incline, 3.5 mph</div>
+        </div>
+        <div class="ex-sets">25 min</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">1</div>
+        <div class="ex-body">
+          <div class="ex-name">Face Pulls <span class="tags"><span class="tag t-key">KEY ⭐</span></span></div>
+          <div class="ex-sub">Rear delt + rotator cuff health · Last: 50 lbs 3×20 · Protects shoulders</div>
+        </div>
+        <div class="ex-sets">4×20</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">2</div>
+        <div class="ex-body">
+          <div class="ex-name">Leaning Cable Lateral Raise</div>
+          <div class="ex-sub">Isolates mid-delt hard · Peak squeeze at top · Both sides</div>
+        </div>
+        <div class="ex-sets">4×12 ea</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">3</div>
+        <div class="ex-body">
+          <div class="ex-name">Cable Curls</div>
+          <div class="ex-sub">Constant tension — great for definition · Last: 50 lbs 3×12</div>
+        </div>
+        <div class="ex-sets">3×15</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">4</div>
+        <div class="ex-body">
+          <div class="ex-name">Rope Pushdown</div>
+          <div class="ex-sub">Spread rope at bottom for lateral head · Last: 50 lbs 2×15</div>
+        </div>
+        <div class="ex-sets">3×15</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">5</div>
+        <div class="ex-body">
+          <div class="ex-name">Battle Ropes</div>
+          <div class="ex-sub">Metabolic finisher · Burns fat, builds grip and shoulder endurance</div>
+        </div>
+        <div class="ex-sets">5×30s</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ritual-block" style="border-bottom:none;border-top:1px solid var(--border)">
+    <div class="ritual-title rt-cool">❄️ Cool-Down · 8 min · This is your full weekly recovery session</div>
+    <div class="ritual-grid">
+      <div class="ritual-item"><div class="ri-name">Full Body Foam Roll</div><div class="ri-detail">3 min · Hit everything — calves, quads, lats, chest</div></div>
+      <div class="ritual-item"><div class="ri-name">Pigeon Pose</div><div class="ri-detail">60s each side · Deep hip release</div></div>
+      <div class="ritual-item"><div class="ri-name">Overhead Lat Stretch</div><div class="ri-detail">45s each side · Full side body open</div></div>
+      <div class="ritual-item"><div class="ri-name">Box Breathing</div><div class="ri-detail">5 rounds · 4s in, 4s hold, 4s out · Lowers cortisol</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SATURDAY -->
+<div class="day-card priority" id="saturday">
+  <div class="dc-head">
+    <div class="dc-left">
+      <div class="dc-day">SAT</div>
+      <div class="dc-name">Shoulders + Arms</div>
+      <div class="dc-focus">Shoulder Caps · Bicep Peak · Tricep Definition · Trimmed Volume</div>
+    </div>
+    <div class="dc-meta">
+      <div class="dc-rest">60s rest</div>
+      <div class="dc-time">~60 min total</div>
+    </div>
+  </div>
+
+  <div class="ritual-block">
+    <div class="ritual-title rt-warm">🔥 Warm-Up · 7 min · Prime the rotator cuff before lateral work</div>
+    <div class="ritual-grid">
+      <div class="ritual-item"><div class="ri-name">Light Dumbbell Circles</div><div class="ri-detail">2×20 small + large · 2.5–5 lbs · Cuff activation</div></div>
+      <div class="ritual-item"><div class="ri-name">Band Pull-Aparts</div><div class="ri-detail">3×15 · Rear delt + external rotation</div></div>
+      <div class="ritual-item"><div class="ri-name">Wrist Circles + Flexion</div><div class="ri-detail">30s each · Prep for curls and presses</div></div>
+      <div class="ritual-item"><div class="ri-name">Neck Rolls</div><div class="ri-detail">5 each direction · Releases trap tension</div></div>
+    </div>
+  </div>
+
+  <div class="workout-block">
+    <div class="ex-list">
+      <div class="ex-row">
+        <div class="ex-num">1</div>
+        <div class="ex-body">
+          <div class="ex-name">Rear Delt Fly Machine <span class="tags"><span class="tag t-key">KEY ⭐</span></span></div>
+          <div class="ex-sub">The cape filler · Last: 40 lbs 4×15 · Increase monthly</div>
+        </div>
+        <div class="ex-sets">4×15</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">2</div>
+        <div class="ex-body">
+          <div class="ex-name">Lateral Raises <span class="tags"><span class="tag t-key">KEY ⭐⭐</span></span></div>
+          <div class="ex-sub">Last: 30 lbs 4×15 · The most important exercise in this entire program</div>
+        </div>
+        <div class="ex-sets">4×15</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">3</div>
+        <div class="ex-body">
+          <div class="ex-name">Leaning Cable Lateral Raise</div>
+          <div class="ex-sub">Deep isolation · Peak at top · Shoulder pop</div>
+        </div>
+        <div class="ex-sets">3×12 ea</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">4</div>
+        <div class="ex-body">
+          <div class="ex-name">Cable Skull Crushers</div>
+          <div class="ex-sub">Best tricep cable isolation · Last: 50 lbs 3×12</div>
+        </div>
+        <div class="ex-sets">3×12</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">5</div>
+        <div class="ex-body">
+          <div class="ex-name">Incline Dumbbell Curl <span class="tags"><span class="tag t-new">NEW</span></span></div>
+          <div class="ex-sub">Replaces Cable Curls here — stretch position = maximum bicep peak development</div>
+        </div>
+        <div class="ex-sets">3×12</div>
+      </div>
+      <div class="ex-row">
+        <div class="ex-num">6</div>
+        <div class="ex-body">
+          <div class="ex-name">Battle Ropes — Optional if you did Friday</div>
+          <div class="ex-sub">Skip if fatigued · Include if energy is high · Fat burn finisher</div>
+        </div>
+        <div class="ex-sets">4×30s</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ritual-block" style="border-bottom:none;border-top:1px solid var(--border)">
+    <div class="ritual-title rt-cool">❄️ Cool-Down · 7 min · End the training week strong</div>
+    <div class="ritual-grid">
+      <div class="ritual-item"><div class="ri-name">Cross-Body Shoulder Stretch</div><div class="ri-detail">45s each side · Release lateral delt</div></div>
+      <div class="ritual-item"><div class="ri-name">Bicep Wall Stretch</div><div class="ri-detail">30s each · Fully lengthen after curls</div></div>
+      <div class="ritual-item"><div class="ri-name">Tricep Overhead Stretch</div><div class="ri-detail">30s each arm · Release long head</div></div>
+      <div class="ritual-item"><div class="ri-name">5-min Walk</div><div class="ri-detail">Slow walk to close out the week · Heart rate down</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SUNDAY -->
+<div class="rest-card" id="sunday">
+  <div class="rest-big">SUN</div>
+  <div>
+    <div class="rest-info-name">Complete Rest — Non-Negotiable</div>
+    <div class="rest-info-sub">
+      You trained 6 days. Your muscles grow on this day, not in the gym.<br>
+      Sleep 8+ hrs · Eat your protein · Light walk only if desired.<br>
+      This day is what makes the other 6 days count.
+    </div>
+  </div>
+</div>
+
+</div><!-- end days-container -->
+
+<!-- RESULTS ACCELERATORS -->
+<div class="sec-head" id="accelerators"><div class="sec-label">See Results Faster</div><div class="sec-line"></div></div>
+<div class="accel-grid">
+  <div class="accel-card">
+    <div class="accel-icon">📸</div>
+    <div class="accel-title">Take Weekly Photos</div>
+    <div class="accel-body">Same lighting, same pose, every Sunday morning. You're vain — use it. Visual proof of progress keeps motivation locked in. You've been training since February; the changes are there, you're just not capturing them.</div>
+  </div>
+  <div class="accel-card">
+    <div class="accel-icon">🥩</div>
+    <div class="accel-title">Protein First, Every Meal</div>
+    <div class="accel-body"><span class="accel-highlight">0.8–1g per lb of bodyweight daily.</span> This is the most important nutritional variable. Eat protein first at every meal — it auto-regulates calories and preserves every lb of muscle you're building.</div>
+  </div>
+  <div class="accel-card">
+    <div class="accel-icon">⏰</div>
+    <div class="accel-title">Shorter Rest = Faster Lean</div>
+    <div class="accel-body">Strict 60s rest in Phase 1. This keeps heart rate elevated, burns more calories per session, and creates more metabolic stress — which is what makes muscles look "hard." Use a timer, not a vibe.</div>
+  </div>
+  <div class="accel-card">
+    <div class="accel-icon">🌙</div>
+    <div class="accel-title">Sleep is the Cheat Code</div>
+    <div class="accel-body">7–9 hrs. Growth hormone peaks during deep sleep — this is literally when your muscles grow and fat burns. Less than 6 hrs doubles cortisol, which stores fat around the midsection specifically.</div>
+  </div>
+  <div class="accel-card">
+    <div class="accel-icon">💧</div>
+    <div class="accel-title">3–4L Water Daily</div>
+    <div class="accel-body">Dehydrated muscles look flat and soft. Hydrated muscles look full, hard, and defined. This is the cheapest and fastest way to look better — and most people are chronically under-hydrated.</div>
+  </div>
+  <div class="accel-card">
+    <div class="accel-icon">📈</div>
+    <div class="accel-title">Log Every Session</div>
+    <div class="accel-body">You're already doing this in your app — keep it up. Progressive overload (adding 1 rep or small weight weekly) is the mechanism behind muscle growth. Without logs, you're guessing. With logs, you're engineering.</div>
+  </div>
+</div>
+
+<!-- NUTRITION -->
+<div class="sec-head"><div class="sec-label">Nutrition Blueprint</div><div class="sec-line"></div></div>
+<div class="nutrition-bar">
+  <div class="nb-head"><div class="nb-title">The Leanness Formula — Muscles Pop at 10–12% Body Fat</div></div>
+  <div class="nb-grid">
+    <div class="nb-item">
+      <div class="nb-label">Protein</div>
+      <div class="nb-val">1g/lb</div>
+      <div class="nb-sub">Per lb of bodyweight · Every single day · Non-negotiable</div>
+    </div>
+    <div class="nb-item">
+      <div class="nb-label">Carb Cycle</div>
+      <div class="nb-val">High/Low</div>
+      <div class="nb-sub">High carbs on Mon, Tue, Thu, Sat · Low on Wed, Fri, Sun</div>
+    </div>
+    <div class="nb-item">
+      <div class="nb-label">Calorie Target</div>
+      <div class="nb-val">–250</div>
+      <div class="nb-sub">Below maintenance · Mild deficit only — preserve muscle</div>
+    </div>
+    <div class="nb-item">
+      <div class="nb-label">Sleep</div>
+      <div class="nb-val">8 hrs</div>
+      <div class="nb-sub">The most underrated aesthetic tool · Non-negotiable</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Nightwing Protocol V2 · 7-Day Rebuild · Target Oct 1, 2025</div>
+
+<script>
+// Countdown
+const oct1 = new Date('2025-10-01');
+const start = new Date('2025-05-21');
+const now = new Date();
+const totalMs = oct1 - start;
+const remainMs = oct1 - now;
+const days = Math.max(0, Math.ceil(remainMs / 86400000));
+const pct = Math.min(100, Math.max(0, ((totalMs - remainMs) / totalMs * 100)));
+
+document.getElementById('daysLeft').textContent = days;
+document.getElementById('pctLeft').textContent = pct.toFixed(0) + '% done';
+setTimeout(() => {
+  document.getElementById('pBar').style.width = pct.toFixed(1) + '%';
+}, 300);
+
+// Smooth scroll
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+// Animate in
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, {threshold: 0.05});
+
+document.querySelectorAll('.day-card, .rest-card, .accel-card, .phase').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js")}</script></body>
+</html>
