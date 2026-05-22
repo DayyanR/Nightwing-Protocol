@@ -157,6 +157,12 @@ body{background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;fo
 .nb-sub{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
 
 .footer{border-top:1px solid var(--border);padding:28px;text-align:center;font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+body{padding-bottom:100px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(7,7,10,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;z-index:50}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;cursor:pointer;text-decoration:none;color:#6b6b80;transition:color 0.2s}
+.bn-item.active{color:#d4f53c}
+.bn-icon{font-size:20px}
+.bn-label{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
 
 @media(max-width:640px){
   .hero{padding:36px 20px 32px}
@@ -180,7 +186,10 @@ body{background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;fo
 
 <!-- NAV -->
 <nav class="sticky-nav">
-  <a href="progress.html" style="padding:12px 18px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#6b6b80;text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap">📈 Progress</a><div class="nav-item" onclick="scrollTo('plan')">Program</div>
+  <a href="progress.html" style="padding:12px 18px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#6b6b80;text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap">📈 Progress</a>
+  <a href="today.html" style="padding:12px 18px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#6b6b80;text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap">📅 Today</a>
+  <a href="nutrition.html" style="padding:12px 18px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#6b6b80;text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap">🥗 Fuel</a>
+  <div class="nav-item" onclick="scrollTo('plan')">Program</div>
   <div class="nav-item" onclick="scrollTo('monday')">Mon</div>
   <div class="nav-item" onclick="scrollTo('tuesday')">Tue</div>
   <div class="nav-item" onclick="scrollTo('wednesday')">Wed</div>
@@ -198,24 +207,24 @@ body{background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;fo
   <div class="hero-sub">Superhero Aesthetic · Full Definition · Every Muscle</div>
   <div class="hero-stats">
     <div class="stat-chip"><div class="val" id="daysLeft">--</div><div class="lbl">Days to Oct 1</div></div>
-    <div class="stat-chip"><div class="val">6</div><div class="lbl">Training Days</div></div>
-    <div class="stat-chip"><div class="val">1</div><div class="lbl">Full Rest Day</div></div>
-    <div class="stat-chip"><div class="val">7</div><div class="lbl">Warm-Ups Included</div></div>
+    <div class="stat-chip"><div class="val">135.5</div><div class="lbl">Current lbs</div></div>
+    <div class="stat-chip"><div class="val">145</div><div class="lbl">Target lbs</div></div>
+    <div class="stat-chip"><div class="val">6</div><div class="lbl">Training Days/Wk</div></div>
   </div>
 </div>
 
 <!-- PROGRESS -->
 <div class="progress-wrap">
   <div class="progress-header">
-    <div class="progress-label">Progress to Oct 1</div>
+    <div class="progress-label">Muscle Gain Progress — 125 → 145 lbs</div>
     <div class="progress-days" id="pctLeft">--%</div>
   </div>
   <div class="progress-track"><div class="progress-fill" id="pBar" style="width:0%"></div></div>
   <div class="phase-markers">
-    <span class="phase-mark">▲ NOW</span>
-    <span class="phase-mark">Jul 1 — Lean Phase</span>
-    <span class="phase-mark">Aug 15 — Peak</span>
-    <span class="phase-mark">Oct 1 🏁</span>
+    <span class="phase-mark">125 lbs (Feb)</span>
+    <span class="phase-mark">135.5 lbs ▲ NOW</span>
+    <span class="phase-mark">140 lbs (Aug)</span>
+    <span class="phase-mark">145 lbs 🏁 Oct 1</span>
   </div>
 </div>
 
@@ -225,21 +234,21 @@ body{background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;fo
   <div class="phase now">
     <div class="now-pip"></div>
     <div class="phase-n">Phase 1 · Now</div>
-    <div class="phase-name">SHOCK THE BODY</div>
+    <div class="phase-name">BUILD THE BASE</div>
     <div class="phase-dates">May 21 → Jul 1</div>
-    <div class="phase-desc">New stimulus = fast visible results. 6 days on, 1 off. 60s rest. Progressive overload every single week. Cardio embedded in warm-ups.</div>
+    <div class="phase-desc">Foundation phase. 2,600 cal training days. Hit 150g protein every day. Progressive overload every week — add reps or weight. Creatine + whey daily. This is where muscle is built.</div>
   </div>
   <div class="phase">
     <div class="phase-n">Phase 2</div>
-    <div class="phase-name">LEAN INTO IT</div>
+    <div class="phase-name">GROW AND CHISEL</div>
     <div class="phase-dates">Jul 1 → Aug 15</div>
-    <div class="phase-desc">Drop rest to 45s. Add 1 extra fat-burn set per session. Slight calorie reduction on non-training days. This is where definition really kicks in.</div>
+    <div class="phase-desc">Push weights heavier. Drop rest to 45s. Keep surplus tight — scale should be moving but slowly. Every lb gained should look like muscle, not fluff. Target: ~140 lbs.</div>
   </div>
   <div class="phase">
     <div class="phase-n">Phase 3</div>
     <div class="phase-name">PEAK CONDITION</div>
     <div class="phase-dates">Aug 15 → Oct 1</div>
-    <div class="phase-desc">Maintain all muscle. Strip last fat layer. Carb cycle. High protein. The physique that was built in phases 1 and 2 is now fully revealed.</div>
+    <div class="phase-desc">Maximize definition on new muscle. Hold 145 lbs. Dial in macros — slight carb cycle to stay lean while maintaining all strength gains. Superhero physique fully revealed.</div>
   </div>
 </div>
 
@@ -884,45 +893,63 @@ body{background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;fo
 <!-- NUTRITION -->
 <div class="sec-head"><div class="sec-label">Nutrition Blueprint</div><div class="sec-line"></div></div>
 <div class="nutrition-bar">
-  <div class="nb-head"><div class="nb-title">The Leanness Formula — Muscles Pop at 10–12% Body Fat</div></div>
+  <div class="nb-head"><div class="nb-title">Lean Bulk Formula — Build Muscle, Stay Chiseled</div></div>
   <div class="nb-grid">
     <div class="nb-item">
       <div class="nb-label">Protein</div>
-      <div class="nb-val">1g/lb</div>
-      <div class="nb-sub">Per lb of bodyweight · Every single day · Non-negotiable</div>
+      <div class="nb-val">150g</div>
+      <div class="nb-sub">1g per lb target bodyweight · Every single day · Non-negotiable</div>
     </div>
     <div class="nb-item">
-      <div class="nb-label">Carb Cycle</div>
-      <div class="nb-val">High/Low</div>
-      <div class="nb-sub">High carbs on Mon, Tue, Thu, Sat · Low on Wed, Fri, Sun</div>
+      <div class="nb-label">Training Days</div>
+      <div class="nb-val">2,600</div>
+      <div class="nb-sub">Calories · P:150 / C:300 / F:88 · Fuel the work</div>
     </div>
     <div class="nb-item">
-      <div class="nb-label">Calorie Target</div>
-      <div class="nb-val">–250</div>
-      <div class="nb-sub">Below maintenance · Mild deficit only — preserve muscle</div>
+      <div class="nb-label">Rest Days</div>
+      <div class="nb-val">2,250</div>
+      <div class="nb-sub">Calories · P:150 / C:200 / F:95 · Stay lean on off days</div>
     </div>
     <div class="nb-item">
-      <div class="nb-label">Sleep</div>
-      <div class="nb-val">8 hrs</div>
-      <div class="nb-sub">The most underrated aesthetic tool · Non-negotiable</div>
+      <div class="nb-label">Creatine</div>
+      <div class="nb-val">5g/day</div>
+      <div class="nb-sub">Every day, no exceptions · Biggest legal edge you have</div>
     </div>
   </div>
 </div>
 
-<div class="footer">Nightwing Protocol V2 · 7-Day Rebuild · Target Oct 1, 2025</div>
+<div class="footer">Nightwing Protocol V2 · Lean Bulk · Target 145 lbs · Oct 1, 2025</div>
+
+<div class="bottom-nav">
+  <a href="index.html" class="bn-item active">
+    <div class="bn-icon">📋</div>
+    <div class="bn-label">Program</div>
+  </a>
+  <a href="today.html" class="bn-item">
+    <div class="bn-icon">📅</div>
+    <div class="bn-label">Today</div>
+  </a>
+  <a href="progress.html" class="bn-item">
+    <div class="bn-icon">📈</div>
+    <div class="bn-label">Progress</div>
+  </a>
+  <a href="nutrition.html" class="bn-item">
+    <div class="bn-icon">🥗</div>
+    <div class="bn-label">Fuel</div>
+  </a>
+</div>
 
 <script>
-// Countdown
+// Days to Oct 1 countdown
 const oct1 = new Date('2025-10-01');
-const start = new Date('2025-05-21');
 const now = new Date();
-const totalMs = oct1 - start;
-const remainMs = oct1 - now;
-const days = Math.max(0, Math.ceil(remainMs / 86400000));
-const pct = Math.min(100, Math.max(0, ((totalMs - remainMs) / totalMs * 100)));
-
+const days = Math.max(0, Math.ceil((oct1 - now) / 86400000));
 document.getElementById('daysLeft').textContent = days;
-document.getElementById('pctLeft').textContent = pct.toFixed(0) + '% done';
+
+// Muscle gain progress: 125 → 145 lbs, current 135.5
+const startWeight = 125, targetWeight = 145, currentWeight = 135.5;
+const pct = Math.min(100, Math.max(0, (currentWeight - startWeight) / (targetWeight - startWeight) * 100));
+document.getElementById('pctLeft').textContent = pct.toFixed(0) + '% to 145';
 setTimeout(() => {
   document.getElementById('pBar').style.width = pct.toFixed(1) + '%';
 }, 300);
