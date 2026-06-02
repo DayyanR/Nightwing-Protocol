@@ -269,75 +269,94 @@ const DAY_CODES = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 const TODAY = DAY_CODES[new Date().getDay()];
 
 const WORKOUT_META = {
-  MON:{name:'Upper Push + Shoulders',focus:'Chest · OHP · Lateral Raises · Triceps',rest:'60s rest',time:'~65 min'},
-  TUE:{name:'Back Width + Bicep Peak',focus:'Lats · Rear Delts · V-Taper · Biceps',rest:'60s rest',time:'~70 min'},
-  WED:{name:'Core Domination + Cardio Burn',focus:'Weighted Abs · Serratus · Obliques',rest:'45s rest',time:'~60 min'},
-  THU:{name:'Legs + Core',focus:'Athletic Quads · Hamstrings · Calves · Core',rest:'60–90s rest',time:'~65 min'},
-  FRI:{name:'Fat Burn + Weak Point Attack',focus:'Pure conditioning + lagging muscles',rest:'30–45s rest',time:'~55 min'},
-  SAT:{name:'Shoulders + Arms',focus:'Shoulder Caps · Bicep Peak · Tricep Definition',rest:'60s rest',time:'~60 min'},
+  MON:{name:'Push A — Chest Primary',focus:'Chest · Shoulders · Triceps · Serratus',rest:'90s rest',time:'~65 min'},
+  TUE:{name:'Pull A — Back Width',focus:'Lats · Rear Delts · Traps · Biceps',rest:'90s rest',time:'~70 min'},
+  WED:{name:'Legs A — Quad & Hamstring',focus:'Quads · Hamstrings · Adductors · Calves · Core',rest:'90–120s rest',time:'~75 min'},
+  THU:{name:'Push B — Shoulder Primary',focus:'Shoulders · Chest · Triceps · Serratus',rest:'90s rest',time:'~65 min'},
+  FRI:{name:'Pull B — Back Thickness',focus:'Lats · Rotator Cuff · Traps · Bicep Detail',rest:'90s rest',time:'~65 min'},
+  SAT:{name:'Legs B — Posterior Chain',focus:'Glutes · Hamstrings · Quads · Calves · Core',rest:'90–120s rest',time:'~70 min'},
 };
 
-const DEFAULT_REST_SECS = {MON:60,TUE:60,WED:45,THU:60,FRI:40,SAT:60};
+const DEFAULT_REST_SECS = {MON:90,TUE:90,WED:120,THU:90,FRI:90,SAT:120};
 
 const WARMUPS = {
-  MON:[{n:'Incline Treadmill Walk',d:'5 min · 10% grade'},{n:'Arm Circles',d:'30s fwd + 30s back'},{n:'Band Pull-Aparts',d:'2×15'},{n:'Chest Opener Stretch',d:'30s each side'}],
-  TUE:[{n:'Rowing Machine',d:'4 min easy'},{n:'Cat-Cow Stretch',d:'10 reps slow'},{n:'Dead Hang',d:'2×20s'},{n:'Scapular Retractions',d:'2×15'}],
-  WED:[{n:'Jump Rope or High Knees',d:'3 min'},{n:'Dead Bug',d:'2×10 slow'},{n:'Hip Flexor Stretch',d:'30s each'}],
-  THU:[{n:'Bike or Walk',d:'4 min'},{n:'Bodyweight Squat',d:'2×15 full depth'},{n:'Glute Bridge',d:'2×15'},{n:'Leg Swings',d:'10 each direction'}],
-  FRI:[{n:'Incline Walk',d:'5 min · 12% grade'},{n:'Full Body Stretch',d:'60s · loosen everything'}],
-  SAT:[{n:'Light Dumbbell Circles',d:'2×20 small + large'},{n:'Band Pull-Aparts',d:'3×15'},{n:'Wrist Circles + Flexion',d:'30s each'},{n:'Neck Rolls',d:'5 each direction'}],
+  MON:[{n:'Incline Treadmill Walk',d:'5 min · 10% grade · fasted — primes fat burning'},{n:'Arm Circles',d:'30s fwd + 30s back · shoulder mobility'},{n:'Band Pull-Aparts',d:'2×15 · activates rear delts before pushing'},{n:'Chest Opener Stretch',d:'30s each side · doorway or cable stack'}],
+  TUE:[{n:'Rowing Machine',d:'4 min easy · blood into back muscles'},{n:'Cat-Cow Stretch',d:'10 reps slow · spinal mobility'},{n:'Dead Hang',d:'2×20s · decompress spine, stretch lats'},{n:'Scapular Retractions',d:'2×15 · activate rhomboids before rows'}],
+  WED:[{n:'Stationary Bike',d:'4 min · blood into legs'},{n:'Bodyweight Squat',d:'2×15 · full depth · knee tracking check'},{n:'Glute Bridge',d:'2×15 · activates glutes before pressing'},{n:'Leg Swings',d:'10 each direction · hip mobility'}],
+  THU:[{n:'Light DB Circles',d:'2×20 small + large · 2.5–5 lbs · cuff activation'},{n:'Band Pull-Aparts',d:'3×15 · rear delt + external rotation'},{n:'Wrist Circles + Flexion',d:'30s each · prep for presses and dips'},{n:'Neck Rolls',d:'5 each direction · releases trap tension'}],
+  FRI:[{n:'Rowing Machine',d:'4 min · blood into pulling muscles'},{n:'Dead Hang',d:'2×20s · decompress spine'},{n:'Scapular Retractions',d:'2×15 · activate rhomboids'},{n:'Cat-Cow Stretch',d:'10 reps · spinal mobility'}],
+  SAT:[{n:'Stationary Bike',d:'4 min · blood into legs'},{n:'Bodyweight Squat',d:'2×15 · full depth'},{n:'Glute Bridge',d:'2×20 · activate glutes for hip thrusts'},{n:'Hip Circles',d:'10 each direction · hip mobility'}],
 };
 
 const COOLDOWNS = {
-  MON:[{n:'Cross-Body Shoulder Stretch',d:'45s each side'},{n:'Chest Doorway Stretch',d:'60s'},{n:'Tricep Overhead Stretch',d:'30s each arm'},{n:'Deep Breathing',d:'10 slow breaths'}],
-  TUE:[{n:"Child's Pose",d:'60s'},{n:'Dead Hang',d:'2×20s'},{n:'Bicep Wall Stretch',d:'30s each'},{n:'Foam Roll Upper Back',d:'90s'}],
-  WED:[{n:'Cobra Stretch',d:'60s'},{n:'Seated Forward Fold',d:'60s'},{n:'Lying Twist',d:'30s each side'}],
-  THU:[{n:'Standing Quad Stretch',d:'45s each leg'},{n:'Seated Hamstring Stretch',d:'60s each leg'},{n:'Calf Stretch on Step',d:'45s each'},{n:'Hip Flexor Lunge Stretch',d:'45s each'}],
-  FRI:[{n:'Full Body Foam Roll',d:'3 min'},{n:'Pigeon Pose',d:'60s each side'},{n:'Overhead Lat Stretch',d:'45s each side'},{n:'Box Breathing',d:'5 rounds · 4s in, 4s hold, 4s out'}],
-  SAT:[{n:'Cross-Body Shoulder Stretch',d:'45s each side'},{n:'Bicep Wall Stretch',d:'30s each'},{n:'Tricep Overhead Stretch',d:'30s each arm'},{n:'5-min Walk',d:'Heart rate down'}],
+  MON:[{n:'Cross-Body Shoulder Stretch',d:'45s each side'},{n:'Chest Doorway Stretch',d:'60s · counteract the push pattern'},{n:'Tricep Overhead Stretch',d:'30s each arm'},{n:'Deep Breathing',d:'10 slow breaths · lower cortisol'}],
+  TUE:[{n:"Child's Pose",d:'60s · full lat stretch'},{n:'Dead Hang',d:'2×20s · spinal decompression'},{n:'Bicep Wall Stretch',d:'30s each · arm against wall, palm flat'},{n:'Foam Roll Upper Back',d:'90s · release thoracic tension'}],
+  WED:[{n:'Standing Quad Stretch',d:'45s each leg'},{n:'Seated Hamstring Stretch',d:'60s each leg'},{n:'Calf Stretch on Step',d:'45s each · prevent tightness'},{n:'Hip Flexor Lunge Stretch',d:'45s each side'}],
+  THU:[{n:'Cross-Body Shoulder Stretch',d:'45s each side'},{n:'Chest Doorway Stretch',d:'60s'},{n:'Wrist Flexor/Extensor Stretch',d:'30s each'},{n:'Deep Breathing',d:'10 slow breaths'}],
+  FRI:[{n:"Child's Pose",d:'60s · full lat stretch'},{n:'Overhead Lat Stretch',d:'45s each side · side body open'},{n:'Bicep Wall Stretch',d:'30s each'},{n:'Foam Roll Upper Back',d:'90s'}],
+  SAT:[{n:'Pigeon Pose',d:'60s each side · deep hip release'},{n:'Seated Forward Fold',d:'60s · hamstrings + lower back'},{n:'Hip Flexor Lunge Stretch',d:'45s each side'},{n:'Hip Circle Mobility',d:'30s each direction'}],
 };
 
-// Cardio blocks that aren't in the exercise tracker
-const CARDIO_BLOCKS = {
-  WED:{name:'Stationary Bike — Cardio Finisher',detail:'20 min steady state · Right after core · Body is primed to burn fat',position:'after'},
-  FRI:{name:'Incline Treadmill Walk',detail:'12–15% incline · 3.5 mph · Best fat-loss tool that doesn\'t eat muscle',position:'before'},
-};
+// No dedicated cardio blocks — cardio is in warmup (bike/walk)
+const CARDIO_BLOCKS = {};
 
 const DEFAULTS = [
-  {id:'ohp',day:'MON',name:'Overhead Press Machine',weight:40,increment:5,target:2,sets:'4×12',bodyweight:false,isAssist:false},
-  {id:'incline_press',day:'MON',name:'Incline Chest Press Machine',weight:50,increment:5,target:2,sets:'4×12'},
-  {id:'cable_fly',day:'MON',name:'Low Cable Chest Fly',weight:40,increment:2.5,target:2,sets:'3×15'},
-  {id:'lateral_mon',day:'MON',name:'Lateral Raises',weight:20,increment:2.5,target:2,sets:'5×15'},
-  {id:'front_raise',day:'MON',name:'Cable Front Raise',weight:20,increment:2.5,target:2,sets:'3×12'},
-  {id:'overhead_tri',day:'MON',name:'Overhead Cable Tricep Extension',weight:30,increment:5,target:2,sets:'3×15'},
-  {id:'lat_pulldown',day:'TUE',name:'Lat Pulldown',weight:50,increment:5,target:2,sets:'5×12–15'},
-  {id:'assisted_pullup',day:'TUE',name:'Assisted Pull-Ups',weight:75,increment:-5,target:2,sets:'4×10–12',isAssist:true},
-  {id:'db_row',day:'TUE',name:'Single Arm Dumbbell Row',weight:15,increment:5,target:2,sets:'4×10 ea'},
-  {id:'rear_delt_fly',day:'TUE',name:'Rear Delt Cable Fly',weight:30,increment:5,target:2,sets:'3×15'},
-  {id:'straight_arm',day:'TUE',name:'Straight Arm Pulldown',weight:50,increment:5,target:2,sets:'3×15'},
-  {id:'db_curl',day:'TUE',name:'Dumbbell Curl',weight:15,increment:2.5,target:2,sets:'3×15'},
-  {id:'hammer_curl',day:'TUE',name:'Hammer Curl',weight:15,increment:2.5,target:2,sets:'3×12'},
-  {id:'cable_crunch',day:'WED',name:'Weighted Cable Crunch',weight:50,increment:5,target:2,sets:'4×10 heavy'},
-  {id:'hanging_leg',day:'WED',name:'Hanging Leg Raises',weight:12.5,increment:2.5,target:2,sets:'4×12 slow'},
-  {id:'ab_wheel',day:'WED',name:'Ab Wheel Rollout',weight:0,increment:0,target:2,sets:'4×10 slow',bodyweight:true},
-  {id:'pullover',day:'WED',name:'Dumbbell Pullover',weight:20,increment:5,target:2,sets:'3×12'},
-  {id:'decline_situp',day:'WED',name:'Weighted Decline Sit-Up',weight:10,increment:5,target:2,sets:'3×12'},
-  {id:'side_plank',day:'WED',name:'Side Plank with Hip Dip',weight:0,increment:0,target:2,sets:'3×12 ea',bodyweight:true},
-  {id:'leg_press',day:'THU',name:'Leg Press',weight:120,increment:10,target:2,sets:'4×15'},
-  {id:'bulgarian',day:'THU',name:'Bulgarian Split Squat',weight:20,increment:5,target:2,sets:'3×10 ea'},
-  {id:'leg_curl',day:'THU',name:'Leg Curl Machine',weight:50,increment:5,target:2,sets:'3×12'},
-  {id:'calf_raise',day:'THU',name:'Standing Calf Raise',weight:40,increment:10,target:2,sets:'4×20'},
-  {id:'hanging_leg_thu',day:'THU',name:'Hanging Leg Raises',weight:0,increment:0,target:2,sets:'5×15',bodyweight:true},
-  {id:'cable_crunch_thu',day:'THU',name:'Cable Crunch',weight:50,increment:5,target:2,sets:'4×20'},
-  {id:'face_pulls',day:'FRI',name:'Face Pulls',weight:50,increment:5,target:2,sets:'4×20'},
-  {id:'lean_lateral',day:'FRI',name:'Leaning Cable Lateral Raise',weight:20,increment:2.5,target:2,sets:'4×12 ea'},
-  {id:'cable_curls_fri',day:'FRI',name:'Cable Curls',weight:50,increment:5,target:2,sets:'3×15'},
-  {id:'rope_pushdown',day:'FRI',name:'Rope Pushdown',weight:50,increment:5,target:2,sets:'3×15'},
-  {id:'rear_delt_machine',day:'SAT',name:'Rear Delt Fly Machine',weight:40,increment:5,target:2,sets:'4×15'},
-  {id:'lateral_sat',day:'SAT',name:'Lateral Raises',weight:30,increment:2.5,target:2,sets:'4×15'},
-  {id:'lean_lateral_sat',day:'SAT',name:'Leaning Cable Lateral Raise',weight:20,increment:2.5,target:2,sets:'3×12 ea'},
-  {id:'skull_crushers',day:'SAT',name:'Cable Skull Crushers',weight:50,increment:5,target:2,sets:'3×12'},
-  {id:'incline_curl',day:'SAT',name:'Incline Dumbbell Curl',weight:12.5,increment:2.5,target:2,sets:'3×12'},
+  // ── MONDAY: PUSH A (Chest Primary) ──────────────────────────────────────────
+  {id:'incline_machine_mon',day:'MON',name:'Machine Incline Chest Press',weight:50,increment:5,target:2,sets:'4×6-10',bodyweight:false,isAssist:false},
+  {id:'db_flat_press',day:'MON',name:'DB Flat Chest Press',weight:30,increment:2.5,target:2,sets:'3×8-12',bodyweight:false,isAssist:false},
+  {id:'low_cable_fly_mon',day:'MON',name:'Low Cable Chest Fly',weight:15,increment:2.5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'db_shoulder_press',day:'MON',name:'DB Shoulder Press',weight:25,increment:2.5,target:2,sets:'3×8-10',bodyweight:false,isAssist:false},
+  {id:'cable_lateral_mon',day:'MON',name:'Cable Lateral Raise',weight:10,increment:2.5,target:3,sets:'4×12-15',bodyweight:false,isAssist:false},
+  {id:'oh_tricep_ext_mon',day:'MON',name:'Overhead Cable Tricep Extension',weight:30,increment:5,target:2,sets:'3×10-15',bodyweight:false,isAssist:false},
+  {id:'db_pullover_mon',day:'MON',name:'DB Pullover',weight:25,increment:2.5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+
+  // ── TUESDAY: PULL A (Back Width + Rear Delts) ────────────────────────────────
+  {id:'lat_pulldown_tue',day:'TUE',name:'Lat Pulldown',weight:50,increment:5,target:2,sets:'4×6-10',bodyweight:false,isAssist:false},
+  {id:'chest_supported_row',day:'TUE',name:'Chest-Supported Row',weight:40,increment:5,target:2,sets:'3×8-12',bodyweight:false,isAssist:false},
+  {id:'kneeling_cable_pd',day:'TUE',name:'Kneeling Single-Arm Cable Pulldown',weight:20,increment:2.5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'cable_rear_delt_tue',day:'TUE',name:'Cable Rear Delt Fly',weight:10,increment:2.5,target:2,sets:'3×15-20',bodyweight:false,isAssist:false},
+  {id:'db_shrugs_tue',day:'TUE',name:'DB Shoulder Shrugs',weight:40,increment:5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'db_curl_tue',day:'TUE',name:'DB Bicep Curl',weight:17.5,increment:2.5,target:2,sets:'3×10-15',bodyweight:false,isAssist:false},
+  {id:'hammer_curl_tue',day:'TUE',name:'Hammer Curl',weight:15,increment:2.5,target:2,sets:'2×12-15',bodyweight:false,isAssist:false},
+
+  // ── WEDNESDAY: LEGS A (Quad + Hamstring Balance) ────────────────────────────
+  {id:'leg_press_wed',day:'WED',name:'Leg Press',weight:120,increment:10,target:2,sets:'4×6-10',bodyweight:false,isAssist:false},
+  {id:'rdl_wed',day:'WED',name:'Romanian Deadlift',weight:60,increment:5,target:2,sets:'3×8-12',bodyweight:false,isAssist:false},
+  {id:'leg_extension_wed',day:'WED',name:'Leg Extension',weight:60,increment:5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'seated_leg_curl',day:'WED',name:'Seated Leg Curl',weight:50,increment:5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'hip_abduction',day:'WED',name:'Hip Abduction Machine',weight:50,increment:5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'hip_adduction',day:'WED',name:'Hip Adduction Machine',weight:50,increment:5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'standing_calf_wed',day:'WED',name:'Standing Calf Raise',weight:80,increment:10,target:2,sets:'4×12-15',bodyweight:false,isAssist:false},
+  {id:'cable_crunch_wed',day:'WED',name:'Weighted Cable Crunch',weight:50,increment:5,target:2,sets:'4×10 heavy',bodyweight:false,isAssist:false},
+  {id:'hanging_leg_wed',day:'WED',name:'Hanging Leg Raises',weight:0,increment:0,target:2,sets:'3×12 slow',bodyweight:true,isAssist:false},
+
+  // ── THURSDAY: PUSH B (Shoulder Primary) ─────────────────────────────────────
+  {id:'ohp_machine_thu',day:'THU',name:'Overhead Press Machine',weight:40,increment:5,target:2,sets:'4×6-10',bodyweight:false,isAssist:false},
+  {id:'bar_dips',day:'THU',name:'Bar Dips',weight:0,increment:0,target:2,sets:'3×6-10',bodyweight:true,isAssist:false},
+  {id:'low_high_fly',day:'THU',name:'Low-to-High Cable Fly',weight:12.5,increment:2.5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'leaning_lateral_thu',day:'THU',name:'Leaning Cable Lateral Raise',weight:10,increment:2.5,target:2,sets:'4×12-15',bodyweight:false,isAssist:false},
+  {id:'cable_front_raise',day:'THU',name:'Cable Front Raise',weight:15,increment:2.5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'rope_pushdown_thu',day:'THU',name:'Rope Pushdown',weight:40,increment:5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'scap_pushup',day:'THU',name:'Scapular Push-Up Plus',weight:0,increment:0,target:2,sets:'3×15',bodyweight:true,isAssist:false},
+
+  // ── FRIDAY: PULL B (Back Thickness + Rotator Cuff) ──────────────────────────
+  {id:'assisted_pullups_fri',day:'FRI',name:'Assisted Pull-Ups',weight:75,increment:-5,target:2,sets:'4×6-10',bodyweight:false,isAssist:true},
+  {id:'single_arm_row',day:'FRI',name:'Single-Arm DB Row',weight:30,increment:2.5,target:2,sets:'3×10-12 ea',bodyweight:false,isAssist:false},
+  {id:'straight_arm_pd',day:'FRI',name:'Straight-Arm Cable Pulldown',weight:40,increment:5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'face_pulls_fri',day:'FRI',name:'Face Pulls',weight:30,increment:5,target:2,sets:'4×15-20',bodyweight:false,isAssist:false},
+  {id:'db_shrugs_fri',day:'FRI',name:'DB Shoulder Shrugs',weight:40,increment:5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'incline_curl_fri',day:'FRI',name:'Incline DB Curl',weight:15,increment:2.5,target:2,sets:'3×10-15',bodyweight:false,isAssist:false},
+  {id:'reverse_curl',day:'FRI',name:'Reverse Curl',weight:15,increment:2.5,target:2,sets:'2×12-15',bodyweight:false,isAssist:false},
+
+  // ── SATURDAY: LEGS B (Posterior Chain + Glute Focus) ────────────────────────
+  {id:'bulgarian_sat',day:'SAT',name:'Bulgarian Split Squat',weight:20,increment:2.5,target:2,sets:'4×8-10 ea',bodyweight:false,isAssist:false},
+  {id:'hip_thrust',day:'SAT',name:'Hip Thrust',weight:45,increment:10,target:2,sets:'3×10-12',bodyweight:false,isAssist:false},
+  {id:'prone_leg_curl',day:'SAT',name:'Prone Leg Curl',weight:40,increment:5,target:2,sets:'3×12-15',bodyweight:false,isAssist:false},
+  {id:'hack_squat',day:'SAT',name:'Hack Squat / Goblet Squat',weight:35,increment:5,target:2,sets:'3×10-12',bodyweight:false,isAssist:false},
+  {id:'seated_calf_sat',day:'SAT',name:'Seated Calf Raise',weight:45,increment:5,target:2,sets:'3×15-20',bodyweight:false,isAssist:false},
+  {id:'tibialis_raise',day:'SAT',name:'Tibialis Raise',weight:0,increment:0,target:2,sets:'3×15-20',bodyweight:true,isAssist:false},
+  {id:'ab_wheel_sat',day:'SAT',name:'Ab Wheel Rollout',weight:0,increment:0,target:2,sets:'3×10 slow',bodyweight:true,isAssist:false},
+  {id:'side_plank_sat',day:'SAT',name:'Side Plank with Hip Dip',weight:0,increment:0,target:2,sets:'3×12 ea',bodyweight:true,isAssist:false},
 ];
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
